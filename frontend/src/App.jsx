@@ -16,6 +16,7 @@ function App() {
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
             <li><a href="#order" className="order-btn">Order Now</a></li>
+            <li><a href="#login" className="login-btn">Employee Login</a></li>
           </ul>
         </nav>
       </header>

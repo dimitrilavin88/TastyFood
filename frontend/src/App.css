@@ -145,6 +145,29 @@
   width: 100%;
 }
 
+/* Navigation Button Base Styles */
+.nav-btn {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white !important;
+  padding: 0.50rem 1rem;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 0.9rem;
+  min-width: 100px;
+  text-align: center;
+  display: inline-block;
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+}
+
+.nav-btn::after {
+  display: none;
+}
+
 .order-btn {
   background: linear-gradient(135deg, #ff6b35, #f7931e);
   color: white !important;
@@ -152,6 +175,10 @@
   border-radius: 25px;
   font-weight: 600;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 0.9rem;
+  width: 160px;
+  text-align: center;
+  display: inline-block;
 }
 
 .order-btn:hover {
@@ -160,6 +187,28 @@
 }
 
 .order-btn::after {
+  display: none;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white !important;
+  padding: 0.50rem 1rem;
+  border-radius: 25px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-size: 0.9rem;
+  width: 160px;
+  text-align: center;
+  display: inline-block;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+}
+
+.login-btn::after {
   display: none;
 }
 
