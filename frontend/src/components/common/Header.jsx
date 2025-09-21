@@ -1,7 +1,5 @@
 import React from 'react';
-import {Routes, Route, Link, useNavigate} from 'react-router-dom'
-import Menu from '../../pages/Menu.jsx'
-import Footer from './Footer.jsx'
+import {Link, useNavigate} from 'react-router-dom'
 
 
 const Header = () => {
@@ -24,10 +22,6 @@ const Header = () => {
           <li><a href="#login" className="login-btn">Employee Login</a></li>
         </ul>
       </nav>
-
-      <Routes>
-        <Route path="/menu" element={<Menu />} />
-      </Routes>
     </header>
   )
 }
