@@ -13,6 +13,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .app {
   min-height: 100vh;
   display: flex;
@@ -128,6 +132,7 @@
 
 .nav-links a:hover {
   color: #ff6b35;
+  cursor: pointer;
 }
 
 .nav-links a::after {

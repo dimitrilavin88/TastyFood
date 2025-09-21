@@ -1,21 +1,21 @@
 import './App.css'
 import Header from './components/common/header'
 import Footer from './components/common/Footer'
+import { Routes, Route } from 'react-router-dom'
+import Menu from './pages/Menu.jsx'
 
-
-function App() {
+// Home page component
+const Home = () => {
   return (
-    <div className="app">
+    <>
       <Header />
-
       <main className="main">
         <section className="hero">
           <div className="hero-content">
             <h1 className="hero-title">Delicious Food, Delivered Fast</h1>
             <p className="hero-subtitle">Experience the finest cuisine from our kitchen to your doorstep. Fresh ingredients, authentic flavors, and lightning-fast delivery.</p>
             <div className="hero-buttons">
-              <button className="btn btn-primary">Order Now</button>
-              <button className="btn btn-secondary">View Menu</button>
+              <button className="btn btn-primary">View Menu</button>
             </div>
             <div className="hero-stats">
               <div className="stat">
@@ -71,6 +71,17 @@ function App() {
         </section>
       </main>
       <Footer />
+    </>
+  )
+}
+
+function App() {
+  return (
+    <div className="app">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/menu" element={<Menu />} />
+      </Routes>
     </div>
   )
 }

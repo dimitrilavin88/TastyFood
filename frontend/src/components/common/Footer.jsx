@@ -5,7 +5,7 @@ import twitterIcon from '../../assets/twitter.png'
 
 const Footer = () => {
     return (
-        <footer className="footer">
+        <footer id="footer" className="footer">
         <div className="container">
           <div className="footer-content">
             <div className="footer-section">
@@ -17,7 +17,7 @@ const Footer = () => {
               <h4>Quick Links</h4>
               <ul>
                 <li><a href="#menu">Menu</a></li>
-                <li><a href="#about">About Us</a></li>
+                <li><a id="about">About Us</a></li>
                 <li><a href="#contact">Contact</a></li>
                 <li><a href="#faq">FAQ</a></li>
               </ul>
