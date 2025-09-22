@@ -86,6 +86,7 @@ html {
 .logo-text:hover {
   transform: scale(1.1) rotate(-2deg);
   filter: brightness(1.2);
+  cursor: pointer;
 }
 
 
