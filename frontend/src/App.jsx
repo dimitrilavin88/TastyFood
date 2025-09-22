@@ -3,6 +3,7 @@ import Header from './components/common/header'
 import Footer from './components/common/Footer'
 import { Routes, Route } from 'react-router-dom'
 import Menu from './pages/Menu.jsx'
+import Login from './pages/Login.jsx'
 
 // Home page component
 const Home = () => {
@@ -81,6 +82,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </div>
   )

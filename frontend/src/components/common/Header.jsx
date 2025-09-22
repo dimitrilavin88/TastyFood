@@ -11,6 +11,9 @@ const Header = () => {
   const goToHome = () => {
     navigate('/');
   }
+  const goToLogin = () => {
+    navigate('/login');
+  }
 
   return (
       <header className="header">
@@ -23,7 +26,7 @@ const Header = () => {
           <li><a onClick={goToMenu}>Menu</a></li>
           <li><a href="#footer">About</a></li>
           <li><a href="#footer">Contact</a></li>
-          <li><a href="#login" className="login-btn">Employee Login</a></li>
+          <li><a href="#login" className="login-btn" onClick={goToLogin}>Employee Login</a></li>
         </ul>
       </nav>
     </header>
