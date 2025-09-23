@@ -9,7 +9,8 @@ import ManageStaff from './pages/ManageStaff.jsx'
 import ManageDrivers from './pages/ManageDrivers.jsx'
 import { AuthProvider } from './utils/auth.jsx'
 import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
-
+import ChangePassword from './pages/ChangePassword.jsx'
+import RetrieveOrder from './pages/RetrieveOrder.jsx'
 // Home page component
 const Home = () => {
   return (
@@ -97,6 +98,14 @@ function App() {
           <Route path="/manage-drivers" 
           element={
             <ProtectedRoutes><ManageDrivers /></ProtectedRoutes>
+          } />
+          <Route path="/change-password" 
+          element={
+            <ProtectedRoutes><ChangePassword /></ProtectedRoutes>
+          } />
+          <Route path="/retrieve-order" 
+          element={
+            <ProtectedRoutes><RetrieveOrder /></ProtectedRoutes>
           } />
         </Routes>
       </div>

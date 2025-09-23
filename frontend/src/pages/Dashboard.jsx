@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { useAuth } from '../utils/auth.jsx';
+import { STAFF_USERS, useAuth } from '../utils/auth.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -24,6 +24,22 @@ const Dashboard = () => {
         }
     }
 
+    const goToRetrieveOrder = () => {
+        if (STAFF_USERS.some(user => user.username === user.username)) {
+        navigate('/retrieve-order');
+    } else {
+        navigate('/login');
+        }
+    }
+
+    const goToChangePassword = () => {
+        if (user.username === "admin" || STAFF_USERS.some(user => user.username === user.username)) {
+            navigate('/change-password');
+        } else {
+            navigate('/login');
+        }
+    }
+
     return (
         <div className="dashboard-page">
             <Header />
@@ -34,17 +50,17 @@ const Dashboard = () => {
                         <div className="admin-dashboard-buttons">
                             <button onClick={goToManageStaff}>Manage Staff</button>
                             <button onClick={goToManageDrivers}>Manage Drivers</button>
-                            <button>Change Password</button>
+                            <button onClick={goToChangePassword}>Change Password</button>
                         </div>
                     </>
                 ) : (
                     <>
-                        <h1>Welcome, {user.name}!</h1>
+                        <h1>Welcome, {user.first_name}!</h1>
                         <div className="dashboard-buttons">
-                            <button>Retrieve Order</button>
+                            <button onClick={goToRetrieveOrder}>Retrieve Order</button>
                             <button>Assign Driver</button>
                             <button>Record Delivery</button>
-                            <button>Change Password</button>
+                            <button onClick={goToChangePassword}>Change Password</button>
                         </div>
                     </>
                 )}
