@@ -2028,6 +2028,20 @@ html {
   transform: none;
 }
 
+.bottom-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.bottom-buttons .btn {
+  flex: 1;
+  max-width: 250px;
+  min-width: 200px;
+}
+
 /* Responsive Retrieve Order Styles */
 @media (max-width: 1024px) {
   .retrieve-order-content {
@@ -2126,6 +2140,17 @@ html {
   .assign-driver button {
     padding: 0.6rem 1.2rem;
     font-size: 0.85rem;
+  }
+  
+  .bottom-buttons {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  .bottom-buttons .btn {
+    max-width: 100%;
+    min-width: auto;
   }
 }
 

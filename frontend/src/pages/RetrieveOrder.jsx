@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { DRIVERS } from '../utils/auth.jsx';
 
 const RetrieveOrder = () => {
+    const navigate = useNavigate();
     const [driver, setDriver] = useState('');
     const [deliveryTime, setDeliveryTime] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isFadingOut, setIsFadingOut] = useState(false);
+    const [queueSuccessMessage, setQueueSuccessMessage] = useState('');
+    const [isQueueFadingOut, setIsQueueFadingOut] = useState(false);
 
     const generateRandomDeliveryTime = () => {
         // Generate random time between 15-45 minutes
@@ -47,6 +51,27 @@ const RetrieveOrder = () => {
         }, 4000);
     }
 
+    const saveToQueue = () => {
+        console.log('Saving to queue');
+        setQueueSuccessMessage('Order saved to queue successfully! 📋');
+        setIsQueueFadingOut(false);
+        
+        // Start fade out after 3.5 seconds
+        setTimeout(() => {
+            setIsQueueFadingOut(true);
+        }, 3500);
+        
+        // Remove the message from DOM after fade out completes
+        setTimeout(() => {
+            setQueueSuccessMessage('');
+            setIsQueueFadingOut(false);
+        }, 4000);
+    }
+
+    const goToDashboard = () => {
+        navigate('/dashboard');
+    }
+
     return (
         <div className="retrieve-order-page">
             <Header />
@@ -54,6 +79,7 @@ const RetrieveOrder = () => {
                 <h1>Retrieve Order</h1>
                 <h2>Order ID: 1234567890</h2>
                 {successMessage && <div className={`success-message ${isFadingOut ? 'fade-out' : ''}`}>{successMessage}</div>}
+                {queueSuccessMessage && <div className={`success-message ${isQueueFadingOut ? 'fade-out' : ''}`}>{queueSuccessMessage}</div>}
                 <div className="retrieve-order-content">
                     <div className="order-summary">
                         <h2>Order Summary</h2>
@@ -118,6 +144,10 @@ const RetrieveOrder = () => {
                     />
                     <button disabled={!driver || !deliveryTime} onClick={handleAssignDriver}>Assign Driver</button>
                     </div>
+                </div>
+                <div className="bottom-buttons">
+                    <button className="btn btn-primary" onClick={saveToQueue}>Save to Queue</button>
+                    <button className="btn btn-secondary" onClick={goToDashboard}>Back to Dashboard</button>
                 </div>
             </main>
             <Footer />
