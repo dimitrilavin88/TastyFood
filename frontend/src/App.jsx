@@ -11,6 +11,7 @@ import { AuthProvider } from './utils/auth.jsx'
 import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
 import ChangePassword from './pages/ChangePassword.jsx'
 import RetrieveOrder from './pages/RetrieveOrder.jsx'
+import RecordDelivery from './pages/RecordDelivery.jsx'
 // Home page component
 const Home = () => {
   return (
@@ -106,6 +107,10 @@ function App() {
           <Route path="/retrieve-order" 
           element={
             <ProtectedRoutes><RetrieveOrder /></ProtectedRoutes>
+          } />
+          <Route path="/record-delivery" 
+          element={
+            <ProtectedRoutes><RecordDelivery /></ProtectedRoutes>
           } />
         </Routes>
       </div>

@@ -1,10 +1,11 @@
 import React from 'react';
-import {Link, useNavigate} from 'react-router-dom'
-
+import {Link, useNavigate} from 'react-router-dom';
+import { useAuth } from '../../utils/auth.jsx';
 
 const Header = () => {
-
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
   const goToMenu = () => {
     navigate('/menu');
   }
@@ -13,6 +14,11 @@ const Header = () => {
   }
   const goToLogin = () => {
     navigate('/login');
+  }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   }
 
   return (
@@ -26,7 +32,13 @@ const Header = () => {
           <li><a onClick={goToMenu}>Menu</a></li>
           <li><a href="#footer">About</a></li>
           <li><a href="#footer">Contact</a></li>
-          <li><a href="#login" className="login-btn" onClick={goToLogin}>Employee Login</a></li>
+          <li>
+            {user ? (
+              <a className="login-btn" onClick={handleLogout}>Logout</a>
+            ) : (
+              <a href="#login" className="login-btn" onClick={goToLogin}>Employee Login</a>
+            )}
+          </li>
         </ul>
       </nav>
     </header>

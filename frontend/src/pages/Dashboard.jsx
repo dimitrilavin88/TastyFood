@@ -32,6 +32,14 @@ const Dashboard = () => {
         }
     }
 
+    const goToRecordDelivery = () => {
+        if (STAFF_USERS.some(user => user.username === user.username)) {
+            navigate('/record-delivery');
+        } else {
+            navigate('/login');
+        }
+    }
+
     const goToChangePassword = () => {
         if (user.username === "admin" || STAFF_USERS.some(user => user.username === user.username)) {
             navigate('/change-password');
@@ -58,8 +66,7 @@ const Dashboard = () => {
                         <h1>Welcome, {user.first_name}!</h1>
                         <div className="dashboard-buttons">
                             <button onClick={goToRetrieveOrder}>Retrieve Order</button>
-                            <button>Assign Driver</button>
-                            <button>Record Delivery</button>
+                            <button onClick={goToRecordDelivery}>Record Delivery</button>
                             <button onClick={goToChangePassword}>Change Password</button>
                         </div>
                     </>
