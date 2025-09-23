@@ -1108,6 +1108,127 @@ html {
   flex-direction: column;
 }
 
+/* Dashboard Page Styles */
+.dashboard-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-page .main {
+  padding: 2rem;
+  min-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-page h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.admin-dashboard-buttons,
+.dashboard-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  max-width: 800px;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+.admin-dashboard-buttons button,
+.dashboard-buttons button {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  text-transform: capitalize;
+  letter-spacing: 0.5px;
+  width: 250px;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-dashboard-buttons button:hover,
+.dashboard-buttons button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+}
+
+.admin-dashboard-buttons button:active,
+.dashboard-buttons button:active {
+  transform: translateY(-1px);
+}
+
+
+/* Responsive Dashboard Styles */
+@media (max-width: 768px) {
+  .dashboard-page .main {
+    padding: 1rem;
+    min-height: calc(100vh - 120px);
+  }
+  
+  .dashboard-page h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .admin-dashboard-buttons,
+  .dashboard-buttons {
+    gap: 1rem;
+    max-width: 400px;
+  }
+  
+  .admin-dashboard-buttons button,
+  .dashboard-buttons button {
+    width: 220px;
+    min-height: 55px;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-page .main {
+    padding: 0.5rem;
+    min-height: calc(100vh - 100px);
+  }
+  
+  .dashboard-page h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .admin-dashboard-buttons,
+  .dashboard-buttons {
+    gap: 0.75rem;
+    max-width: 300px;
+  }
+  
+  .admin-dashboard-buttons button,
+  .dashboard-buttons button {
+    width: 200px;
+    min-height: 50px;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
 .login-card {
   justify-content: center;
   align-items: center;

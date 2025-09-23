@@ -9,7 +9,26 @@ const Dashboard = () => {
         <div className="dashboard-page">
             <Header />
             <main className="main">
-                <h1>Welcome, {user.name}!</h1>
+                {user.username === "admin" ? (
+                    <>
+                        <h1>Admin Panel</h1>
+                        <div className="admin-dashboard-buttons">
+                            <button>Manage Staff</button>
+                            <button>Manage Drivers</button>
+                            <button>Change Password</button>
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <h1>Welcome, {user.name}!</h1>
+                        <div className="dashboard-buttons">
+                            <button>Retrieve Order</button>
+                            <button>Assign Driver</button>
+                            <button>Record Delivery</button>
+                            <button>Change Password</button>
+                        </div>
+                    </>
+                )}
             </main>
             <Footer />
         </div>
