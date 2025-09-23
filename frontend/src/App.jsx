@@ -5,7 +5,9 @@ import { Routes, Route } from 'react-router-dom'
 import Menu from './pages/Menu.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
+import ManageStaff from './pages/ManageStaff.jsx'
 import { AuthProvider } from './utils/auth.jsx'
+import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
 
 // Home page component
 const Home = () => {
@@ -87,6 +89,10 @@ function App() {
           <Route path="/menu" element={<Menu />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/manage-staff" 
+          element={
+            <ProtectedRoutes><ManageStaff /></ProtectedRoutes>
+          } />
         </Routes>
       </div>
     </AuthProvider>

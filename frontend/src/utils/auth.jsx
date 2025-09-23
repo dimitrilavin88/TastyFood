@@ -8,22 +8,18 @@ export const AuthContext = createContext();
 
 // Sample staff users database
 // In a real application, this would be fetched from a backend API
-const STAFF_USERS = [
+export const STAFF_USERS = [
   {
-    id: 1,
     username: 'admin',
     password: 'Admin123',
-    role: 'manager',
-    name: 'Admin User',
-    email: 'admin@tastyfood.com'
+    first_name: 'Admin',
+    last_name: 'User'
   },
   {
-    id: 2,
     username: 'manager00',
     password: 'Manager123',
-    role: 'manager',
-    name: 'Restaurant Manager',
-    email: 'manager@tastyfood.com'
+    first_name: 'Dimitri',
+    last_name: 'Lavin'
   }
 ];
 
@@ -176,11 +172,42 @@ export const validatePassword = (password) => {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [staffUsers, setStaffUsers] = useState(STAFF_USERS);
   const login = (user) => setUser(user);
   const logout = () => setUser(null);
+
+  const addStaffUser = (user) => {
+    setStaffUsers([...staffUsers, user]);
+  }
+
   return (
     <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>
   );
+}
+
+export const validateFirstName = (name) => {
+  if (!/^[a-zA-Z]{2,}$/.test(name)) {
+    return {
+      success: false,
+      message: 'Name needs to be atleast 2 letters'
+    };
+  }
+  return {
+    success: true,
+    message: 'Name is valid'
+  };
+}
+export const validateLastName = (name) => {
+  if (!/^[a-zA-Z]{2,}$/.test(name)) {
+    return {
+      success: false,
+      message: 'Last name needs to be atleast 2 letters'
+    };
+  }
+  return {
+    success: true,
+    message: 'Last name is valid'
+  };
 }
 
 export const useAuth = () => {
@@ -197,6 +224,8 @@ export default {
   validateLogin,
   validateUsername,
   validatePassword,
+  validateFirstName,
+  validateLastName,
   AuthProvider,
   useAuth
 };

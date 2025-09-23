@@ -2,9 +2,20 @@ import React, { useState } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../utils/auth.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
+
+    const goToManageStaff = () => {
+        if (user.username === "admin") {
+            navigate('/manage-staff');
+        } else {
+            navigate('/login');
+        }
+    }
+
     return (
         <div className="dashboard-page">
             <Header />
@@ -13,14 +24,14 @@ const Dashboard = () => {
                     <>
                         <h1>Admin Panel</h1>
                         <div className="admin-dashboard-buttons">
-                            <button>Manage Staff</button>
+                            <button onClick={goToManageStaff}>Manage Staff</button>
                             <button>Manage Drivers</button>
                             <button>Change Password</button>
                         </div>
                     </>
                 ) : (
                     <>
-                        <h1>Welcome, {user.name}!</h1>
+                        <h1>Welcome, {user.first_name}!</h1>
                         <div className="dashboard-buttons">
                             <button>Retrieve Order</button>
                             <button>Assign Driver</button>
