@@ -16,6 +16,14 @@ const Dashboard = () => {
         }
     }
 
+    const goToManageDrivers = () => {
+        if (user.username === "admin") {
+            navigate('/manage-drivers');
+        } else {
+            navigate('/login');
+        }
+    }
+
     return (
         <div className="dashboard-page">
             <Header />
@@ -25,13 +33,13 @@ const Dashboard = () => {
                         <h1>Admin Panel</h1>
                         <div className="admin-dashboard-buttons">
                             <button onClick={goToManageStaff}>Manage Staff</button>
-                            <button>Manage Drivers</button>
+                            <button onClick={goToManageDrivers}>Manage Drivers</button>
                             <button>Change Password</button>
                         </div>
                     </>
                 ) : (
                     <>
-                        <h1>Welcome, {user.first_name}!</h1>
+                        <h1>Welcome, {user.name}!</h1>
                         <div className="dashboard-buttons">
                             <button>Retrieve Order</button>
                             <button>Assign Driver</button>

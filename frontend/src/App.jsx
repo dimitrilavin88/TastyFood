@@ -6,6 +6,7 @@ import Menu from './pages/Menu.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import ManageStaff from './pages/ManageStaff.jsx'
+import ManageDrivers from './pages/ManageDrivers.jsx'
 import { AuthProvider } from './utils/auth.jsx'
 import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
 
@@ -92,6 +93,10 @@ function App() {
           <Route path="/manage-staff" 
           element={
             <ProtectedRoutes><ManageStaff /></ProtectedRoutes>
+          } />
+          <Route path="/manage-drivers" 
+          element={
+            <ProtectedRoutes><ManageDrivers /></ProtectedRoutes>
           } />
         </Routes>
       </div>

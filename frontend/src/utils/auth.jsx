@@ -23,6 +23,20 @@ export const STAFF_USERS = [
   }
 ];
 
+// Sample drivers database
+export const DRIVERS = [
+  {
+    first_name: 'John',
+    last_name: 'Smith',
+    active: true
+  },
+  {
+    first_name: 'Sarah',
+    last_name: 'Johnson',
+    active: true
+  }
+];
+
 /**
  * Verify if a user exists in the staff database
  * @param {string} username - The username to check
