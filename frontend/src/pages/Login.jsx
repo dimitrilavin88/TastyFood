@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { validateLogin, validateUsername, validatePassword } from '../utils/auth';
+import { validateLogin, validateUsername, validatePassword, useAuth } from '../utils/auth.jsx';
 
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     const isButtonDisabled = () => {
         const usernameResult = validateUsername(username);
@@ -39,8 +42,10 @@ const Login = () => {
         
         if (result.success) {
             setErrorMessage('');
-            alert(`Welcome, ${result.user.name}!`);
-            // Here you would typically redirect or set authentication state
+            // Set the user in the auth context
+            login(result.user);
+            // Redirect to dashboard
+            navigate('/dashboard');
         } else {
             setErrorMessage(result.message);
         }
@@ -76,7 +81,7 @@ const Login = () => {
                                 validateAndSetError('password');
                             }}
                         />
-                        <button type="submit" disabled={isButtonDisabled()} onClick={handleSubmit}>Login</button>
+                        <button type="submit" disabled={isButtonDisabled()}>Login</button>
                     </form>
                 </div>
             </main>

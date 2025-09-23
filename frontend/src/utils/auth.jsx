@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+import { createContext, useContext } from 'react';
+
+export const AuthContext = createContext();
+
 // Staff authentication utility
 // This file handles user verification for staff login
 
@@ -138,12 +143,22 @@ export const validateLogin = (username, password) => {
 };
 
 export const validateUsername = (username) => {
-  if (!/^[a-zA-Z]{2,}\d{2}$/.test(username)) {
+  if (username === 'admin') {
+    return {
+      success: true,
+      message: ''
+    };
+  }
+  else if (!/^[a-zA-Z]{2,}\d{2}$/.test(username)) {
     return {
       success: false,
       message: 'Username needs to be atleast 2 letters and 2 numbers at the end'
     };
   }
+  return {
+    success: true,
+    message: 'Username is valid'
+  };
 }
 
 export const validatePassword = (password) => {
@@ -153,6 +168,23 @@ export const validatePassword = (password) => {
       message: 'Password needs to have atleast 6 characters, at least one uppercase letter, one lowercase letter, and at least one number'
     };
   }
+  return {
+    success: true,
+    message: 'Password is valid'
+  };
+}
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const login = (user) => setUser(user);
+  const logout = () => setUser(null);
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>
+  );
+}
+
+export const useAuth = () => {
+  return useContext(AuthContext);
 }
 
 // Default export for easy importing
@@ -164,5 +196,7 @@ export default {
   hasRole,
   validateLogin,
   validateUsername,
-  validatePassword
+  validatePassword,
+  AuthProvider,
+  useAuth
 };

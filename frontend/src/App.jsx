@@ -4,6 +4,8 @@ import Footer from './components/common/Footer'
 import { Routes, Route } from 'react-router-dom'
 import Menu from './pages/Menu.jsx'
 import Login from './pages/Login.jsx'
+import Dashboard from './pages/Dashboard.jsx'
+import { AuthProvider } from './utils/auth.jsx'
 
 // Home page component
 const Home = () => {
@@ -78,13 +80,16 @@ const Home = () => {
 
 function App() {
   return (
-    <div className="app">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </div>
+    <AuthProvider>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Routes>
+      </div>
+    </AuthProvider>
   )
 }
 
