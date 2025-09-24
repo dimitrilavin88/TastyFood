@@ -13,6 +13,7 @@ import ChangePassword from './pages/ChangePassword.jsx'
 import RetrieveOrder from './pages/RetrieveOrder.jsx'
 import RecordDelivery from './pages/RecordDelivery.jsx'
 import OrderConfirmation from './pages/OrderConfirmation.jsx'
+import DeliveryInfo from './pages/DeliveryInfo.jsx'
 // Home page component
 const Home = () => {
   return (
@@ -116,6 +117,7 @@ function App() {
             <ProtectedRoutes><RecordDelivery /></ProtectedRoutes>
           } />
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/delivery-info" element={<DeliveryInfo />} />
         </Routes>
       </div>
     </AuthProvider>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import visaImage from '../../assets/visa.jpg';
 import mastercardImage from '../../assets/mastercard.png';
 import amexImage from '../../assets/amex.png';
 import discoverImage from '../../assets/discover.png';
 
 const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal }) => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         cardOwner: '',
         cardNumber: '',
@@ -393,7 +395,7 @@ const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal }) => {
                             <button type="button" className="btn btn-secondary" onClick={handleClose}>
                                 Cancel
                             </button>
-                            <button type="submit" className="btn btn-primary" disabled={isProcessing}>
+                            <button type="submit" className="btn btn-primary" disabled={isProcessing} onClick={() => navigate('/delivery-info')}>
                                 {isProcessing ? 'Processing...' : `Pay $${orderTotal.toFixed(2)}`}
                             </button>
                         </div>
