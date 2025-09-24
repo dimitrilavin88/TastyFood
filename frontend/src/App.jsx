@@ -12,6 +12,7 @@ import ProtectedRoutes from './utils/ProtectedRoutes.jsx'
 import ChangePassword from './pages/ChangePassword.jsx'
 import RetrieveOrder from './pages/RetrieveOrder.jsx'
 import RecordDelivery from './pages/RecordDelivery.jsx'
+import OrderConfirmation from './pages/OrderConfirmation.jsx'
 // Home page component
 const Home = () => {
   return (
@@ -91,7 +92,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={
+            <ProtectedRoutes><Dashboard /></ProtectedRoutes>
+          } />
           <Route path="/manage-staff" 
           element={
             <ProtectedRoutes><ManageStaff /></ProtectedRoutes>
@@ -112,6 +115,7 @@ function App() {
           element={
             <ProtectedRoutes><RecordDelivery /></ProtectedRoutes>
           } />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
         </Routes>
       </div>
     </AuthProvider>

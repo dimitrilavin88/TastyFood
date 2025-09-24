@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+
 
 const CheckoutItems = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const navigate = useNavigate();
     const toggleOpen = () => {
         setIsOpen(!isOpen);
     };
@@ -123,7 +126,7 @@ const CheckoutItems = () => {
                                         <span>Total:</span>
                                         <span>${calculateTotal().toFixed(2)}</span>
                                     </div>
-                                    <button className="btn btn-primary checkout-btn">Confirm Order</button>
+                                    <button className="btn btn-primary checkout-btn" onClick={() => navigate('/order-confirmation', { state: { cartItems, total: calculateTotal() } })}>Confirm Order</button>
                                 </div>
                             )}
                         </div>
