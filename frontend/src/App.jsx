@@ -130,6 +130,7 @@ const Home = () => {
   )
 }
 
+// App component
 function App() {
   return (
     <AuthProvider>
