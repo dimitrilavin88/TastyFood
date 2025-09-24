@@ -29,18 +29,61 @@ const Home = () => {
             <div className="hero-buttons">
               <button className="btn btn-primary" onClick={() => navigate('/menu')}>View Menu</button>
             </div>
-            <div className="hero-stats">
-              <div className="stat">
-                <span className="stat-number">15-30</span>
-                <span className="stat-label">Min Delivery</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">4.9</span>
-                <span className="stat-label">Rating</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">500+</span>
-                <span className="stat-label">Happy Customers</span>
+            <div className="menu-preview">
+              <h3>Featured Menu Items</h3>
+              <div className="menu-preview-grid">
+                <div className="menu-preview-category">
+                  <h4>Appetizers</h4>
+                  <div className="preview-items">
+                    <div className="preview-item">
+                      <img src="https://static01.nyt.com/images/2024/02/08/multimedia/ND-mozzarella-sticks-pvfm/ND-mozzarella-sticks-pvfm-mediumSquareAt3X.jpg" alt="Mozzarella Sticks" />
+                      <span>Mozzarella Sticks</span>
+                    </div>
+                    <div className="preview-item">
+                      <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop&auto=format" alt="Chicken Wings" />
+                      <span>Chicken Wings</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="menu-preview-category">
+                  <h4>Main Courses</h4>
+                  <div className="preview-items">
+                    <div className="preview-item">
+                      <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop" alt="Grilled Salmon" />
+                      <span>Grilled Salmon</span>
+                    </div>
+                    <div className="preview-item">
+                      <img src="https://tastesbetterfromscratch.com/wp-content/uploads/2023/03/Chicken-Parmesan-1.jpg" alt="Chicken Parmesan" />
+                      <span>Chicken Parmesan</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="menu-preview-category">
+                  <h4>Desserts</h4>
+                  <div className="preview-items">
+                    <div className="preview-item">
+                      <img src="https://therecipecritic.com/wp-content/uploads/2021/04/newyorkcheesecake.jpg" alt="Cheesecake" />
+                      <span>Cheesecake</span>
+                    </div>
+                    <div className="preview-item">
+                      <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop" alt="Chocolate Lava Cake" />
+                      <span>Chocolate Lava Cake</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="menu-preview-category">
+                  <h4>Beverages</h4>
+                  <div className="preview-items">
+                    <div className="preview-item">
+                      <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop" alt="Coffee" />
+                      <span>Coffee</span>
+                    </div>
+                    <div className="preview-item">
+                      <img src="https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&h=300&fit=crop" alt="Soda" />
+                      <span>Soda</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
