@@ -5,7 +5,7 @@ import mastercardImage from '../../assets/mastercard.png';
 import amexImage from '../../assets/amex.png';
 import discoverImage from '../../assets/discover.png';
 
-const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal }) => {
+const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems }) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         cardOwner: '',
@@ -395,7 +395,16 @@ const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal }) => {
                             <button type="button" className="btn btn-secondary" onClick={handleClose}>
                                 Cancel
                             </button>
-                            <button type="submit" className="btn btn-primary" disabled={isProcessing} onClick={() => navigate('/delivery-info')}>
+                            <button type="button" className="btn btn-primary" disabled={isProcessing} onClick={() => {
+                                if (validateForm()) {
+                                    setIsProcessing(true);
+                                    setTimeout(() => {
+                                        setIsProcessing(false);
+                                        navigate('/delivery-info', { state: { cartItems, orderTotal } });
+                                        onClose();
+                                    }, 1000);
+                                }
+                            }}>
                                 {isProcessing ? 'Processing...' : `Pay $${orderTotal.toFixed(2)}`}
                             </button>
                         </div>

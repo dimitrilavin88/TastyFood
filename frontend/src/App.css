@@ -3382,4 +3382,258 @@ html {
 .login-form label {
   font-size: 1.2rem;
   font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Completed Order Page Styles */
+.completed-order-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.completed-order-page .main {
+  padding: 2rem;
+  min-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.completed-order-page h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+.completed-order-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+.completed-order-content h3 {
+  font-size: 1.5rem;
+  color: #ff6b35;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.completed-order-content p {
+  font-size: 1.1rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.delivery-details {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.delivery-details h4 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.delivery-details p {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.order-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.order-actions .btn {
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 180px;
+}
+
+.order-actions .btn-primary {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.order-actions .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+}
+
+.order-actions .btn-secondary {
+  background: transparent;
+  color: #6c757d;
+  border: 2px solid #6c757d;
+}
+
+.order-actions .btn-secondary:hover {
+  background: #6c757d;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Responsive Completed Order */
+@media (max-width: 768px) {
+  .completed-order-page .main {
+    padding: 1rem;
+  }
+  
+  .completed-order-page h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .completed-order-content {
+    padding: 1.5rem;
+  }
+  
+  .order-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .order-actions .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .completed-order-page .main {
+    padding: 0.5rem;
+  }
+  
+  .completed-order-page h1 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .completed-order-content {
+    padding: 1rem;
+  }
+  
+  .delivery-details {
+    padding: 1rem;
+  }
+}
+
+/* Order Summary Table Styles */
+.order-summary {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+.order-summary h4 {
+  font-size: 1.2rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5rem;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.order-table th,
+.order-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.order-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.order-table td {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.order-table tbody tr:hover {
+  background-color: #f5f5f5;
+}
+
+.order-table .total-row {
+  background-color: #e8f4f8;
+  font-weight: 600;
+}
+
+.order-table .total-row td {
+  color: #2c3e50;
+  font-size: 1rem;
+  padding: 1rem 0.75rem;
+}
+
+/* Responsive Order Summary */
+@media (max-width: 768px) {
+  .order-summary {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .order-table th,
+  .order-table td {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .order-table .total-row td {
+    font-size: 0.9rem;
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-summary {
+    padding: 0.8rem;
+  }
+
+  .order-table th,
+  .order-table td {
+    padding: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .order-table .total-row td {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.4rem;
+  }
 }

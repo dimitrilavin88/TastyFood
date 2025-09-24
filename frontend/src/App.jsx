@@ -1,7 +1,7 @@
 import './App.css'
 import Header from './components/common/header'
 import Footer from './components/common/Footer'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
 import Menu from './pages/Menu.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
@@ -14,8 +14,10 @@ import RetrieveOrder from './pages/RetrieveOrder.jsx'
 import RecordDelivery from './pages/RecordDelivery.jsx'
 import OrderConfirmation from './pages/OrderConfirmation.jsx'
 import DeliveryInfo from './pages/DeliveryInfo.jsx'
+import CompletedOrder from './pages/CompletedOrder.jsx'
 // Home page component
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <>
       <Header />
@@ -25,7 +27,7 @@ const Home = () => {
             <h1 className="hero-title">Delicious Food, Delivered Fast</h1>
             <p className="hero-subtitle">Experience the finest cuisine from our kitchen to your doorstep. Fresh ingredients, authentic flavors, and lightning-fast delivery.</p>
             <div className="hero-buttons">
-              <button className="btn btn-primary">View Menu</button>
+              <button className="btn btn-primary" onClick={() => navigate('/menu')}>View Menu</button>
             </div>
             <div className="hero-stats">
               <div className="stat">
@@ -76,7 +78,7 @@ const Home = () => {
           <div className="container">
             <h2>Ready to Order?</h2>
             <p>Join thousands of satisfied customers and experience the best food delivery service in town.</p>
-            <button className="btn btn-primary btn-large">Start Ordering</button>
+            <button className="btn btn-primary btn-large" onClick={() => navigate('/menu')}>Start Ordering</button>
           </div>
         </section>
       </main>
@@ -118,6 +120,7 @@ function App() {
           } />
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/delivery-info" element={<DeliveryInfo />} />
+          <Route path="/completed-order" element={<CompletedOrder />} />
         </Routes>
       </div>
     </AuthProvider>

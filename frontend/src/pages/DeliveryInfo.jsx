@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import CompletedOrder from './CompletedOrder';
 
 const DeliveryInfo = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [successMessage, setSuccessMessage] = useState('');
     const [isFadingOut, setIsFadingOut] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    
+    // Get cart items from navigation state
+    const cartItems = location.state?.cartItems || [];
+    const orderTotal = location.state?.orderTotal || 0;
     
     // Form data state
     const [formData, setFormData] = useState({
@@ -106,11 +112,7 @@ const DeliveryInfo = () => {
             return;
         }
         
-        setErrorMessage(''); // Clear any existing error messages
-        setSuccessMessage('Order placed successfully! 🎉');
-        setIsFadingOut(false);
-        setTimeout(() => { setIsFadingOut(true); }, 3500);
-        setTimeout(() => { setSuccessMessage(''); setIsFadingOut(false); }, 4000);
+        navigate('/completed-order', { state: { formData, cartItems, orderTotal } });
     };
 
     return (

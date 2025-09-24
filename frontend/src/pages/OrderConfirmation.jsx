@@ -90,6 +90,7 @@ const OrderConfirmation = () => {
                 onClose={() => setIsPaymentPopupOpen(false)}
                 onPaymentSuccess={handlePaymentSuccess}
                 orderTotal={grandTotal}
+                cartItems={cartItems}
             />
         </div>
     )

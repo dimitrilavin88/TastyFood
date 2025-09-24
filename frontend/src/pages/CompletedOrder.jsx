@@ -1,20 +1,61 @@
 import React, { useState } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const CompletedOrder = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const formData = location.state?.formData || {};
+    const cartItems = location.state?.cartItems || [];
+    const orderTotal = location.state?.orderTotal || 0;
+    
+    // Generate a random numerical order ID
+    const orderId = Math.floor(Math.random() * 9000000000) + 1000000000;
+    
     return (
         <div className="completed-order-page">
             <Header />
             <main className="main">
-                <h1>Completed Order</h1>
+                <h1>Your Order Has Been Placed!</h1>
                 <div className="completed-order-content">
-                    <h2>Order Details</h2>
-                    <p>Order ID: 1234567890</p>
-                    <p>Order Date: 2021-01-01</p>
-                    <p>Order Total: $100.00</p>
+                    <h3>Order ID: {orderId}</h3>
+                    <p>Estimated Delivery Time: 6:46pm</p>
+                    
+                    <div className="order-summary">
+                        <h4>Order Summary</h4>
+                        <table className="order-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cartItems.map((item) => (
+                                    <tr key={item.id}>
+                                        <td>{item.name}</td>
+                                        <td>{item.quantity}</td>
+                                        <td>${item.price.toFixed(2)}</td>
+                                        <td>${item.total.toFixed(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                            <tfoot>
+                                <tr className="total-row">
+                                    <td colSpan="3"><strong>Total:</strong></td>
+                                    <td><strong>${orderTotal.toFixed(2)}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <div className="order-actions">
+                        <button className="btn btn-primary another-order-btn" onClick={() => navigate('/menu')}>Place Another Order</button>
+                        <button className="btn btn-secondary back-to-home-btn" onClick={() => navigate('/')}>Back to Home</button>
+                    </div>
                 </div>
             </main>
             <Footer />
