@@ -2,6 +2,7 @@ import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import MenuItems from '../components/customer/MenuItems';
 import Items from '../components/customer/ItemCards';
+import CheckoutItems from '../components/customer/CheckoutItems';
 
 
 const Menu = () => {
@@ -15,6 +16,7 @@ const Menu = () => {
                     <p>Select a category from the sidebar to view our delicious offerings!</p>
                     <Items />
                 </div>
+                <CheckoutItems />
             </main>
             <Footer />
         </div>

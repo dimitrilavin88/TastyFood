@@ -1,7 +1,35 @@
 import React, { useState } from 'react';
 
 const ItemCards = ({ items }) => {
-    const [quantity, setQuantity] = useState(0);
+    const [quantities, setQuantities] = useState({});
+
+    const handleQuantityChange = (itemName, value) => {
+        setQuantities(prev => ({
+            ...prev,
+            [itemName]: parseInt(value) || 0
+        }));
+    };
+
+    const handleAddToCart = (item) => {
+        const quantity = quantities[item.name] || 0;
+        
+        console.log('handleAddToCart called with:', { item, quantity }); // Debug log
+        console.log('window.addToCart exists:', !!window.addToCart); // Debug log
+        
+        if (window.addToCart) {
+            // Extract numeric price from string (e.g., "$12.99" -> 12.99)
+            const price = parseFloat(item.price.replace('$', ''));
+            console.log('Calling addToCart with:', { name: item.name, quantity, price }); // Debug log
+            window.addToCart(item.name, quantity, price);
+            // Reset quantity after adding
+            setQuantities(prev => ({
+                ...prev,
+                [item.name]: 0
+            }));
+        } else {
+            console.error('window.addToCart function not found!'); // Debug log
+        }
+    };
 
     return (
         <div className="item-cards">
@@ -11,9 +39,27 @@ const ItemCards = ({ items }) => {
                     <h3>{item.name} - {item.price}</h3>
                     <p>{item.description}</p>
                     <div className="item-card-quantity">
-                        <input type="number" placeholder="Quantity" />
+                        <button 
+                            onClick={() => handleQuantityChange(item.name, (quantities[item.name] || 0) - 1)}
+                            disabled={(quantities[item.name] || 0) <= 0}
+                        >-</button>
+                        <input 
+                            type="number" 
+                            placeholder="0"
+                            value={quantities[item.name] || ''}
+                            onChange={(e) => handleQuantityChange(item.name, e.target.value)}
+                            min="0"
+                        />
+                        <button 
+                            onClick={() => handleQuantityChange(item.name, (quantities[item.name] || 0) + 1)}
+                        >+</button>
                     </div>
-                    <button>Add to Cart</button>
+                    <button 
+                        onClick={() => handleAddToCart(item)}
+                        disabled={(quantities[item.name] || 0) <= 0}
+                    >
+                        Add to Cart
+                    </button>
                 </div>
             ))}
         </div>
