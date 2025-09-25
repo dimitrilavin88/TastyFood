@@ -184,6 +184,35 @@ export const validatePassword = (password) => {
   };
 }
 
+/**
+ * Verify if the provided old password matches the current user's password
+ * @param {string} username - The username of the current user
+ * @param {string} oldPassword - The old password to verify
+ * @returns {object} - Result object with success status and message
+ */
+export const verifyOldPassword = (username, oldPassword) => {
+  const user = STAFF_USERS.find(user => user.username === username);
+  
+  if (!user) {
+    return {
+      success: false,
+      message: 'User not found'
+    };
+  }
+  
+  if (user.password === oldPassword) {
+    return {
+      success: true,
+      message: 'Old password is correct'
+    };
+  } else {
+    return {
+      success: false,
+      message: 'The password you entered is not your current password'
+    };
+  }
+};
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [staffUsers, setStaffUsers] = useState(STAFF_USERS);
@@ -238,6 +267,7 @@ export default {
   validateLogin,
   validateUsername,
   validatePassword,
+  verifyOldPassword,
   validateFirstName,
   validateLastName,
   AuthProvider,

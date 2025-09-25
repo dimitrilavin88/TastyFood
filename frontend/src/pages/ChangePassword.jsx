@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { useAuth, validatePassword } from '../utils/auth.jsx';
+import { useAuth, validatePassword, verifyOldPassword } from '../utils/auth.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const ChangePassword = () => {
@@ -16,6 +16,14 @@ const ChangePassword = () => {
     const validateChangePassword = (oldPass, newPass, confirmPass) => {
         if (!oldPass || oldPass.trim() === '') {
             return { success: false, message: 'Old password is required' };
+        }
+        
+        // Verify that the old password matches the current user's password
+        if (user && user.username) {
+            const oldPasswordResult = verifyOldPassword(user.username, oldPass);
+            if (!oldPasswordResult.success) {
+                return { success: false, message: oldPasswordResult.message };
+            }
         }
         
         const newPassResult = validatePassword(newPass);

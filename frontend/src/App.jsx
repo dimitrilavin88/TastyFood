@@ -18,6 +18,42 @@ import CompletedOrder from './pages/CompletedOrder.jsx'
 // Home page component
 const Home = () => {
   const navigate = useNavigate();
+  
+  const handleMenuItemClick = (itemName) => {
+    // Map item names to section IDs (same as in MenuItems component)
+    const sectionMap = {
+      // Appetizers
+      "Mozzarella Sticks": "appetizers",
+      "Chicken Wings": "appetizers", 
+      "Fried Pickles": "appetizers",
+      "Onion Rings": "appetizers",
+      
+      // Main Courses
+      "Grilled Salmon": "main-courses",
+      "Chicken Parmesan": "main-courses",
+      "Beef Lasagna": "main-courses", 
+      "Vegetable Stir-Fry": "main-courses",
+      
+      // Desserts
+      "Cheesecake": "desserts",
+      "Ice Cream": "desserts",
+      "Chocolate Lava Cake": "desserts",
+      "Fruit Salad": "desserts",
+      
+      // Beverages
+      "Soda": "beverages",
+      "Water": "beverages",
+      "Coffee": "beverages",
+      "Tea": "beverages"
+    };
+    
+    const sectionId = sectionMap[itemName];
+    if (sectionId) {
+      // Navigate to menu page with section parameter
+      navigate(`/menu?section=${sectionId}`);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -35,11 +71,11 @@ const Home = () => {
                 <div className="menu-preview-category">
                   <h4>Appetizers</h4>
                   <div className="preview-items">
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Mozzarella Sticks")} style={{cursor: 'pointer'}}>
                       <img src="https://static01.nyt.com/images/2024/02/08/multimedia/ND-mozzarella-sticks-pvfm/ND-mozzarella-sticks-pvfm-mediumSquareAt3X.jpg" alt="Mozzarella Sticks" />
                       <span>Mozzarella Sticks</span>
                     </div>
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Chicken Wings")} style={{cursor: 'pointer'}}>
                       <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop&auto=format" alt="Chicken Wings" />
                       <span>Chicken Wings</span>
                     </div>
@@ -48,11 +84,11 @@ const Home = () => {
                 <div className="menu-preview-category">
                   <h4>Main Courses</h4>
                   <div className="preview-items">
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Grilled Salmon")} style={{cursor: 'pointer'}}>
                       <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop" alt="Grilled Salmon" />
                       <span>Grilled Salmon</span>
                     </div>
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Chicken Parmesan")} style={{cursor: 'pointer'}}>
                       <img src="https://tastesbetterfromscratch.com/wp-content/uploads/2023/03/Chicken-Parmesan-1.jpg" alt="Chicken Parmesan" />
                       <span>Chicken Parmesan</span>
                     </div>
@@ -61,11 +97,11 @@ const Home = () => {
                 <div className="menu-preview-category">
                   <h4>Desserts</h4>
                   <div className="preview-items">
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Cheesecake")} style={{cursor: 'pointer'}}>
                       <img src="https://therecipecritic.com/wp-content/uploads/2021/04/newyorkcheesecake.jpg" alt="Cheesecake" />
                       <span>Cheesecake</span>
                     </div>
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Chocolate Lava Cake")} style={{cursor: 'pointer'}}>
                       <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop" alt="Chocolate Lava Cake" />
                       <span>Chocolate Lava Cake</span>
                     </div>
@@ -74,11 +110,11 @@ const Home = () => {
                 <div className="menu-preview-category">
                   <h4>Beverages</h4>
                   <div className="preview-items">
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Coffee")} style={{cursor: 'pointer'}}>
                       <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop" alt="Coffee" />
                       <span>Coffee</span>
                     </div>
-                    <div className="preview-item">
+                    <div className="preview-item" onClick={() => handleMenuItemClick("Soda")} style={{cursor: 'pointer'}}>
                       <img src="https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&h=300&fit=crop" alt="Soda" />
                       <span>Soda</span>
                     </div>

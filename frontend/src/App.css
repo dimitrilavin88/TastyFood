@@ -611,6 +611,14 @@ html {
   opacity: 0.9;
 }
 
+.restaurant-description {
+  margin-top: 1.5rem;
+  color: #bdc3c7;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 300px;
+}
+
 .footer-section ul {
   list-style: none;
 }

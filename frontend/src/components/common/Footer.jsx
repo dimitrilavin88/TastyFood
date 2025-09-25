@@ -4,6 +4,7 @@ import instagramIcon from '../../assets/instagram.png'
 import twitterIcon from '../../assets/twitter.png'
 
 const Footer = () => {
+
     return (
         <footer id="footer" className="footer">
         <div className="container">
@@ -12,17 +13,13 @@ const Footer = () => {
               <div className="logo">
                 <span className="logo-text">TastyFood</span>
               </div>
+              <p className="restaurant-description" id="about">
+                Experience delicious flavors and exceptional service at TastyFood. 
+                We're passionate about serving fresh, high-quality meals that bring 
+                people together for memorable dining experiences.
+              </p>
             </div>
-            <div className="footer-section">
-              <h4>Quick Links</h4>
-              <ul>
-                <li><a href="#menu">Menu</a></li>
-                <li><a id="about">About Us</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="#faq">FAQ</a></li>
-              </ul>
-            </div>
-            <div className="footer-section">
+            <div className="footer-section" id="contact-info">
               <h4>Contact Info</h4>
               <p>📧 tastyfood@gmail.com</p>
               <p>📞 (555) 123-4567</p>

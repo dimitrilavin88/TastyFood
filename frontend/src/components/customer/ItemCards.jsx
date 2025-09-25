@@ -169,13 +169,13 @@ const Items = () => {
 
     return (
         <div className="items">
-            <h2>Appetizers</h2>
+            <h2 id="appetizers">Appetizers</h2>
             <ItemCards items={appetizers} />
-            <h2>Main Courses</h2>
+            <h2 id="main-courses">Main Courses</h2>
             <ItemCards items={mainCourses} />
-            <h2>Desserts</h2>
+            <h2 id="desserts">Desserts</h2>
             <ItemCards items={desserts} />
-            <h2>Beverages</h2>
+            <h2 id="beverages">Beverages</h2>
             <ItemCards items={beverages} />
         </div>
     )
