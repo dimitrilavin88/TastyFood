@@ -1,0 +1,87 @@
+package com.tastyfood.backend.controller;
+
+import com.tastyfood.backend.domain.Order;
+import com.tastyfood.backend.domain.OrderItem;
+import com.tastyfood.backend.enums.OrderStatus;
+import com.tastyfood.backend.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/orders")
+@CrossOrigin(origins = "*")
+public class OrderController {
+    
+    @Autowired
+    private OrderService orderService;
+    
+    @GetMapping
+    public ResponseEntity<List<Order>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> getOrder(@PathVariable Integer id) {
+        Optional<Order> order = orderService.getOrderById(id);
+        return order.map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Order>> getOrdersByStatus(@PathVariable OrderStatus status) {
+        return ResponseEntity.ok(orderService.getOrdersByStatus(status));
+    }
+    
+    @GetMapping("/{id}/items")
+    public ResponseEntity<List<OrderItem>> getOrderItems(@PathVariable Integer id) {
+        return ResponseEntity.ok(orderService.getOrderItems(id));
+    }
+    
+    @PostMapping
+    public ResponseEntity<Order> createOrder(@RequestBody Map<String, Object> request) {
+        Order order = new Order();
+        order.setCustomerName((String) request.get("customerName"));
+        order.setCustomerPhone((String) request.get("customerPhone"));
+        
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> itemsData = (List<Map<String, Object>>) request.get("items");
+        
+        List<OrderItem> orderItems = itemsData.stream()
+            .map(itemData -> {
+                OrderItem item = new OrderItem();
+                item.setItemId((Integer) itemData.get("itemId"));
+                item.setQuantity((Integer) itemData.get("quantity"));
+                item.setUnitPrice(new java.math.BigDecimal(itemData.get("unitPrice").toString()));
+                item.setLineTotal(item.getUnitPrice().multiply(new java.math.BigDecimal(item.getQuantity())));
+                return item;
+            })
+            .toList();
+        
+        Order createdOrder = orderService.createOrder(order, orderItems);
+        return ResponseEntity.ok(createdOrder);
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<Order> updateOrder(@PathVariable Integer id, @RequestBody Order order) {
+        order.setOrderId(id);
+        return ResponseEntity.ok(orderService.updateOrder(order));
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> deleteOrder(@PathVariable Integer id) {
+        Map<String, String> response = new HashMap<>();
+        if (orderService.deleteOrder(id)) {
+            response.put("message", "Order deleted successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Order not found");
+            return ResponseEntity.status(404).body(response);
+        }
+    }
+}
