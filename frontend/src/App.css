@@ -1698,6 +1698,10 @@ html {
   gap: 1rem;
 }
 
+.dashboard-form-actions {
+  margin-top: 1.5rem;
+}
+
 .btn-full {
   width: 100%;
 }
