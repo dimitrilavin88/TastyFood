@@ -1,0 +1,172 @@
+@startuml
+skinparam classAttributeIconSize 0
+hide circle
+
+' ======================
+' Domain Entities
+' ======================
+class Employee {
+  - username : String
+  - firstName : String
+  - lastName : String
+  - role : UserType
+  - activeStatus : Boolean
+  - hireDate : Date
+  - lastActiveAt : Instant
+}
+
+class DeliveryAddress {
+  - addressId : Int
+  - buildingNumber : Int
+  - street : String
+  - aptUnit : String
+  - city : String
+  - state : String
+  - zipCode : Int
+  - instructions : String
+}
+
+class Driver {
+  - driverId : Int
+  - fullName : String
+  - onDelivery : Boolean
+  - phoneNumber : String
+  - status : DriverStatus
+  - vehicleDescription : String
+  - currentOrderId : Int
+}
+
+class ItemCategory {
+  - categoryId : Int
+  - name : String
+  - displayOrder : Int
+  - isFeatured : Boolean
+}
+
+class MenuItem {
+  - itemId : Int
+  - categoryId : Int
+  - name : String
+  - description : String
+  - price : BigDecimal
+  - imageUrl : String
+  - availability : Boolean
+  - prepTimeMinutes : Int
+}
+
+class Order {
+  - orderId : Int
+  - customerName : String
+  - customerPhone : String
+  - driverId : Int
+  - addressId : Int
+  - subtotal : BigDecimal
+  - tip : BigDecimal
+  - grandTotal : BigDecimal
+  - status : OrderStatus
+  - createdAt : Instant
+  - estimatedDeliveryTime : Instant
+  - deliveredAt : Instant
+  - specialInstructions : String
+  - lastUpdatedAt : Instant
+}
+
+class OrderItem {
+  - orderId : Int
+  - itemId : Int
+  - quantity : Int
+  - unitPrice : BigDecimal
+  - lineTotal : BigDecimal
+}
+
+MenuItem "many" -- "1" ItemCategory
+Order "many" -- "1" Driver
+Order "many" -- "1" DeliveryAddress
+OrderItem "many" -- "1" Order
+OrderItem "many" -- "1" MenuItem
+
+' ======================
+' Service Layer
+' ======================
+class AuthenticationService
+class EmployeeService
+class MenuService
+class OrderService
+class DriverService
+class DeliveryAddressService
+
+EmployeeService ..> Employee
+MenuService ..> ItemCategory
+MenuService ..> MenuItem
+OrderService ..> Order
+OrderService ..> OrderItem
+DriverService ..> Driver
+DeliveryAddressService ..> DeliveryAddress
+
+' OrderService uses MenuService and DeliveryAddressService
+OrderService ..> MenuService
+OrderService ..> DeliveryAddressService
+
+' ======================
+' DB Interface Layer
+' ======================
+class DBInterfaceLoginCredentials <<interface>>
+class DBInterfaceEmployees <<interface>>
+class DBInterfaceDeliveryAddress <<interface>>
+class DBInterfaceDrivers <<interface>>
+class DBInterfaceItemCategories <<interface>>
+class DBInterfaceMenuItems <<interface>>
+class DBInterfaceOrders <<interface>>
+class DBInterfaceOrderItems <<interface>>
+
+AuthenticationService ..> DBInterfaceLoginCredentials
+EmployeeService ..> DBInterfaceEmployees
+MenuService ..> DBInterfaceItemCategories
+MenuService ..> DBInterfaceMenuItems
+OrderService ..> DBInterfaceOrders
+OrderService ..> DBInterfaceOrderItems
+DriverService ..> DBInterfaceDrivers
+DeliveryAddressService ..> DBInterfaceDeliveryAddress
+
+' ======================
+' Repository Layer
+' ======================
+class LoginCredentialsRepository <<interface>>
+class EmployeeRepository <<interface>>
+class DeliveryAddressRepository <<interface>>
+class DriverRepository <<interface>>
+class ItemCategoryRepository <<interface>>
+class MenuItemRepository <<interface>>
+class OrderRepository <<interface>>
+class OrderItemRepository <<interface>>
+
+DBInterfaceLoginCredentials o-- LoginCredentialsRepository
+DBInterfaceEmployees o-- EmployeeRepository
+DBInterfaceDeliveryAddress o-- DeliveryAddressRepository
+DBInterfaceDrivers o-- DriverRepository
+DBInterfaceItemCategories o-- ItemCategoryRepository
+DBInterfaceMenuItems o-- MenuItemRepository
+DBInterfaceOrders o-- OrderRepository
+DBInterfaceOrderItems o-- OrderItemRepository
+
+' ======================
+' Facade (optional)
+' ======================
+class TastyFoodMain {
+  authService : AuthenticationService
+  employeeService : EmployeeService
+  menuService : MenuService
+  orderService : OrderService
+  driverService : DriverService
+  deliveryAddressService : DeliveryAddressService
+}
+
+TastyFoodMain ..> AuthenticationService
+TastyFoodMain ..> EmployeeService
+TastyFoodMain ..> MenuService
+TastyFoodMain ..> OrderService
+TastyFoodMain ..> DriverService
+TastyFoodMain ..> DeliveryAddressService
+
+@enduml
+
