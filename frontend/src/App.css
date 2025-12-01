@@ -151,6 +151,87 @@ html {
   width: 100%;
 }
 
+.user-menu {
+  position: relative;
+}
+
+.user-menu-button {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 0.6rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.user-menu-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.4);
+}
+
+.user-menu-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+}
+
+.user-menu-arrow {
+  font-size: 0.9rem;
+  transition: transform 0.2s ease;
+}
+
+.user-menu-arrow.open {
+  transform: rotate(180deg);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.75rem);
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  padding: 0.75rem;
+  min-width: 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  z-index: 2000;
+}
+
+.user-menu-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.user-menu-dropdown button {
+  background: transparent;
+  border: none;
+  color: #2c3e50;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.user-menu-dropdown button:hover {
+  background: rgba(255, 107, 53, 0.1);
+  color: #ff6b35;
+}
+
 /* Navigation Button Base Styles */
 .nav-btn {
   background: linear-gradient(135deg, #ff6b35, #f7931e);
@@ -1377,6 +1458,310 @@ html {
   transform: translateY(-1px);
 }
 
+.staff-dashboard-intro {
+  color: #57606f;
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  max-width: 720px;
+}
+
+.staff-dashboard-grid {
+  display: grid;
+  gap: 2rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.dashboard-section {
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.dashboard-section h2 {
+  font-size: 1.6rem;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-section-subtitle {
+  color: #6c757d;
+  font-size: 0.95rem;
+  margin-top: -0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-section .success-message {
+  margin: 0;
+  align-self: stretch;
+}
+
+.dashboard-section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.dashboard-section-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f6f8ff;
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.in-progress {
+  background: #ff6b35;
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.15);
+}
+
+.status-dot.idle {
+  background: #a0aec0;
+  box-shadow: 0 0 0 4px rgba(160, 174, 192, 0.15);
+}
+
+.status-label {
+  letter-spacing: 0.3px;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.retrieve-order-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.dashboard-card {
+  background: #f9fbff;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 16px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: 0 6px 24px rgba(15, 23, 42, 0.08);
+}
+
+.dashboard-card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dashboard-card-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #1e293b;
+}
+
+.dashboard-meta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: 0.2px;
+}
+
+.dashboard-meta.muted {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.dashboard-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.dashboard-card table th,
+.dashboard-card table td {
+  text-align: left;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.dashboard-card table th {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.dashboard-card table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.customer-details {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.customer-details li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px dashed rgba(203, 213, 225, 0.8);
+}
+
+.customer-details li:last-child {
+  border-bottom: none;
+}
+
+.customer-details .label {
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.customer-details .value {
+  color: #475569;
+  font-size: 0.92rem;
+  text-align: right;
+  max-width: 65%;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.form-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1f2937;
+}
+
+.dashboard-input {
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1f2937;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+}
+
+.dashboard-input:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.15);
+}
+
+.dashboard-input::placeholder {
+  color: #94a3b8;
+}
+
+.dashboard-section-actions,
+.dashboard-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-full-mobile {
+  min-width: 220px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-section-heading {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-section-actions,
+  .dashboard-form-actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: stretch;
+  }
+
+  .dashboard-section-actions .btn,
+  .dashboard-form-actions .btn {
+    width: 100%;
+  }
+
+  .btn-full-mobile {
+    width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .retrieve-order-grid {
+    grid-template-columns: 1.4fr 1fr;
+    grid-template-areas:
+      "order assign"
+      "order customer";
+  }
+
+  .order-card {
+    grid-area: order;
+  }
+
+  .assign-card {
+    grid-area: assign;
+  }
+
+  .customer-card {
+    grid-area: customer;
+  }
+}
+
+@media (min-width: 992px) {
+  .staff-dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 991px) {
+  .staff-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* Responsive Dashboard Styles */
 @media (max-width: 768px) {
@@ -2035,7 +2420,7 @@ html {
   font-weight: 700;
 }
 
-.retrieve-order-content {
+.retrieve-order-page .retrieve-order-content {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -2045,9 +2430,9 @@ html {
   max-width: 1400px;
 }
 
-.order-summary,
-.customer-info,
-.assign-driver {
+.retrieve-order-page .order-summary,
+.retrieve-order-page .customer-info,
+.retrieve-order-page .assign-driver {
   background: white;
   padding: 2rem;
   border-radius: 15px;
@@ -2213,7 +2598,7 @@ html {
   font-weight: 700;
 }
 
-.record-delivery-content {
+.record-delivery-page .record-delivery-content {
   background: white;
   padding: 2rem;
   border-radius: 15px;
@@ -2222,13 +2607,13 @@ html {
   max-width: 600px;
 }
 
-.record-delivery-form {
+.record-delivery-page .record-delivery-form {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
 }
 
-.record-delivery-form label {
+.record-delivery-page .record-delivery-form label {
   font-weight: 600;
   color: #2c3e50;
   margin-bottom: 0.5rem;
@@ -2236,9 +2621,9 @@ html {
   display: block;
 }
 
-.record-delivery-form select,
-.record-delivery-form input,
-.record-delivery-form textarea {
+.record-delivery-page .record-delivery-form select,
+.record-delivery-page .record-delivery-form input,
+.record-delivery-page .record-delivery-form textarea {
   padding: 1rem;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
@@ -2248,27 +2633,27 @@ html {
   font-family: inherit;
 }
 
-.record-delivery-form select:focus,
-.record-delivery-form input:focus,
-.record-delivery-form textarea:focus {
+.record-delivery-page .record-delivery-form select:focus,
+.record-delivery-page .record-delivery-form input:focus,
+.record-delivery-page .record-delivery-form textarea:focus {
   outline: none;
   border-color: #ff6b35;
   background: white;
   box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
-.record-delivery-form textarea {
+.record-delivery-page .record-delivery-form textarea {
   resize: vertical;
   min-height: 100px;
   font-family: inherit;
 }
 
-.record-delivery-form textarea::placeholder {
+.record-delivery-page .record-delivery-form textarea::placeholder {
   color: #999;
   font-style: italic;
 }
 
-.record-delivery-form button:disabled {
+.record-delivery-page .record-delivery-form button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
@@ -2282,9 +2667,9 @@ html {
     max-width: 600px;
   }
   
-  .order-summary,
-  .customer-info,
-  .assign-driver {
+  .retrieve-order-page .order-summary,
+  .retrieve-order-page .customer-info,
+  .retrieve-order-page .assign-driver {
     width: 100%;
     max-width: 500px;
     margin-bottom: 1.5rem;
@@ -2403,13 +2788,13 @@ html {
     max-width: 500px;
   }
   
-  .record-delivery-form {
+  .record-delivery-page .record-delivery-form {
     gap: 1rem;
   }
   
-  .record-delivery-form select,
-  .record-delivery-form input,
-  .record-delivery-form textarea {
+  .record-delivery-page .record-delivery-form select,
+  .record-delivery-page .record-delivery-form input,
+  .record-delivery-page .record-delivery-form textarea {
     padding: 0.75rem;
     font-size: 0.9rem;
   }
@@ -2431,18 +2816,18 @@ html {
     max-width: 100%;
   }
   
-  .record-delivery-form {
+  .record-delivery-page .record-delivery-form {
     gap: 0.75rem;
   }
   
-  .record-delivery-form select,
-  .record-delivery-form input,
-  .record-delivery-form textarea {
+  .record-delivery-page .record-delivery-form select,
+  .record-delivery-page .record-delivery-form input,
+  .record-delivery-page .record-delivery-form textarea {
     padding: 0.6rem;
     font-size: 0.85rem;
   }
   
-  .record-delivery-form textarea {
+  .record-delivery-page .record-delivery-form textarea {
     min-height: 80px;
   }
 }
