@@ -1,5 +1,6 @@
 package com.tastyfood.backend.controller;
 
+import com.tastyfood.backend.domain.DeliveryAddress;
 import com.tastyfood.backend.domain.Order;
 import com.tastyfood.backend.domain.OrderItem;
 import com.tastyfood.backend.enums.OrderStatus;
@@ -63,7 +64,32 @@ public class OrderController {
             })
             .toList();
         
-        Order createdOrder = orderService.createOrder(order, orderItems);
+        // Extract delivery address information
+        DeliveryAddress deliveryAddress = null;
+        @SuppressWarnings("unchecked")
+        Map<String, Object> addressData = (Map<String, Object>) request.get("deliveryAddress");
+        if (addressData != null) {
+            deliveryAddress = new DeliveryAddress();
+            Object buildingNumberObj = addressData.get("buildingNumber");
+            if (buildingNumberObj != null) {
+                try {
+                    deliveryAddress.setBuildingNumber(Integer.parseInt(buildingNumberObj.toString()));
+                } catch (NumberFormatException e) {
+                    // Handle invalid building number
+                }
+            }
+            deliveryAddress.setStreet((String) addressData.get("street"));
+            deliveryAddress.setAptUnit((String) addressData.get("aptUnit"));
+            deliveryAddress.setCity((String) addressData.get("city"));
+            deliveryAddress.setState((String) addressData.get("state"));
+            Object zipCodeObj = addressData.get("zipCode");
+            if (zipCodeObj != null) {
+                deliveryAddress.setZipCode(zipCodeObj.toString());
+            }
+            deliveryAddress.setInstructions((String) addressData.get("instructions"));
+        }
+        
+        Order createdOrder = orderService.createOrder(order, orderItems, deliveryAddress);
         return ResponseEntity.ok(createdOrder);
     }
     

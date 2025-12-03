@@ -12,7 +12,7 @@ const CheckoutItems = () => {
         setIsOpen(!isOpen);
     };
 
-    const addToCart = (itemName, quantity, price) => {
+    const addToCart = (itemName, quantity, price, itemId) => {
         if (!quantity || quantity <= 0) {
             setErrorMessage('Please enter a valid quantity greater than zero');
             setTimeout(() => setErrorMessage(''), 3000);
@@ -25,6 +25,7 @@ const CheckoutItems = () => {
             quantity: quantity,
             price: price,
             total: quantity * price,
+            itemId: itemId, // Include itemId for backend API
             id: `${itemName}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` // More robust unique ID
         };
         

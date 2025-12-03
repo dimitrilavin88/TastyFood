@@ -91,7 +91,7 @@ const ManageStaff = () => {
                 body: JSON.stringify({
                     firstName: firstName.trim(),
                     lastName: lastName.trim(),
-                    password: password,
+            password: password,
                     role: 'STAFF'
                 })
             });
@@ -109,10 +109,10 @@ const ManageStaff = () => {
             
             // Show success message with credentials
             alert(`Staff member added successfully!\nUsername: ${username}\nPassword: ${password}\n\nPlease save these credentials.`);
-            
-            // Clear the form
-            setFirstName('');
-            setLastName('');
+        
+        // Clear the form
+        setFirstName('');
+        setLastName('');
         } catch (error) {
             console.error('Error creating employee:', error);
             setErrorMessage(error.message || 'Failed to add staff member. Please try again.');
@@ -199,17 +199,17 @@ const ManageStaff = () => {
                         {loading ? (
                             <div>Loading staff members...</div>
                         ) : (
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
                                         <th>Username</th>
                                         <th>Role</th>
-                                        <th>Active</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                                    <th>Active</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
                                 <tbody>
                                     {staffUsers.length === 0 ? (
                                         <tr>
@@ -225,22 +225,22 @@ const ManageStaff = () => {
                                                 <td>{staffUser.username}</td>
                                                 <td>{staffUser.role}</td>
                                                 <td>{staffUser.activeStatus ? 'Yes' : 'No'}</td>
-                                                <td>
+                                        <td>
                                                     {staffUser.username.toLowerCase() !== 'admin' ? (
-                                                        <button 
+                                            <button 
                                                             onClick={() => handleDelete(staffUser.username)}
-                                                        >
-                                                            Delete
-                                                        </button>
+                                            >
+                                                Delete
+                                            </button>
                                                     ) : (
                                                         <span style={{ color: '#999', fontStyle: 'italic' }}>N/A</span>
                                                     )}
-                                                </td>
-                                            </tr>
+                                        </td>
+                                    </tr>
                                         ))
                                     )}
-                                </tbody>
-                            </table>
+                            </tbody>
+                        </table>
                         )}
                     </div>
                 </div>

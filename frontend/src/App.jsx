@@ -134,11 +134,11 @@ const Home = () => {
                               <span>{item.name}</span>
                             </div>
                           ))}
-                        </div>
-                      </div>
+              </div>
+              </div>
                     );
                   })}
-                </div>
+              </div>
               )}
             </div>
           </div>

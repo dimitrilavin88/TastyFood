@@ -22,6 +22,29 @@ public class DeliveryAddressService {
         return dbInterface.findById(addressId);
     }
     
+    /**
+     * Finds an existing address or creates a new one if it doesn't exist
+     * @param address The address to find or create
+     * @return The existing or newly created address
+     */
+    public DeliveryAddress findOrCreateAddress(DeliveryAddress address) {
+        // Check if address already exists (matching building number, street, city, state, zip code)
+        Optional<DeliveryAddress> existingAddress = dbInterface.findByBuildingNumberAndStreetAndCityAndStateAndZipCode(
+            address.getBuildingNumber(),
+            address.getStreet(),
+            address.getCity(),
+            address.getState(),
+            address.getZipCode()
+        );
+        
+        if (existingAddress.isPresent()) {
+            return existingAddress.get();
+        }
+        
+        // Address doesn't exist, create a new one
+        return dbInterface.save(address);
+    }
+    
     public DeliveryAddress createAddress(DeliveryAddress address) {
         return dbInterface.save(address);
     }

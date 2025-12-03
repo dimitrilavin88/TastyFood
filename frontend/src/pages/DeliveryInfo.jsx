@@ -107,12 +107,65 @@ const DeliveryInfo = () => {
         return true;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!validateForm()) {
             return;
         }
         
-        navigate('/completed-order', { state: { formData, cartItems, orderTotal } });
+        try {
+            setErrorMessage('');
+            
+            // Prepare order data for API
+            const orderData = {
+                customerName: formData.name,
+                customerPhone: formData.phone,
+                items: cartItems.map(item => ({
+                    itemId: item.itemId,
+                    quantity: item.quantity,
+                    unitPrice: item.price
+                })),
+                deliveryAddress: {
+                    buildingNumber: parseInt(formData.buildingNumber) || null,
+                    street: formData.street,
+                    aptUnit: formData.aptUnit || null,
+                    city: formData.city,
+                    state: formData.state,
+                    zipCode: formData.zipCode,
+                    instructions: null // Can be added later if needed
+                }
+            };
+            
+            // Create order via API
+            const response = await fetch('http://localhost:8080/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to create order');
+            }
+            
+            const createdOrder = await response.json();
+            
+            // Navigate to completed order page with order data
+            navigate('/completed-order', { 
+                state: { 
+                    formData, 
+                    cartItems, 
+                    orderTotal,
+                    orderNumber: createdOrder.orderNumber,
+                    orderId: createdOrder.orderId
+                } 
+            });
+        } catch (error) {
+            console.error('Error creating order:', error);
+            setErrorMessage(error.message || 'Failed to place order. Please try again.');
+            setTimeout(() => setErrorMessage(''), 5000);
+        }
     };
 
     return (

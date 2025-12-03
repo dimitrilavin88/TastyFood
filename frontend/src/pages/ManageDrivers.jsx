@@ -101,10 +101,10 @@ const ManageDrivers = () => {
             
             // Show success message
             alert(`Driver hired successfully!`);
-            
-            // Clear the form
-            setFirstName('');
-            setLastName('');
+        
+        // Clear the form
+        setFirstName('');
+        setLastName('');
         } catch (error) {
             console.error('Error creating driver:', error);
             setErrorMessage(error.message || 'Failed to add driver. Please try again.');
@@ -196,14 +196,14 @@ const ManageDrivers = () => {
                         {loading ? (
                             <div>Loading drivers...</div>
                         ) : (
-                            <table>
-                                <thead>
-                                    <tr>
+                        <table>
+                            <thead>
+                                <tr>
                                         <th>Full Name</th>
                                         <th>On Delivery</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
                                 <tbody>
                                     {drivers.length === 0 ? (
                                         <tr>
@@ -216,18 +216,18 @@ const ManageDrivers = () => {
                                             <tr key={driver.driverId}>
                                                 <td>{driver.fullName}</td>
                                                 <td>{driver.onDelivery ? 'Yes' : 'No'}</td>
-                                                <td>
-                                                    <button 
+                                        <td>
+                                            <button 
                                                         onClick={() => handleDelete(driver.driverId)}
-                                                    >
-                                                        Fire
-                                                    </button>
-                                                </td>
-                                            </tr>
+                                            >
+                                                Fire
+                                            </button>
+                                        </td>
+                                    </tr>
                                         ))
                                     )}
-                                </tbody>
-                            </table>
+                            </tbody>
+                        </table>
                         )}
                     </div>
                 </div>

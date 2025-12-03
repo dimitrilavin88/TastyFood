@@ -9,9 +9,7 @@ const CompletedOrder = () => {
     const formData = location.state?.formData || {};
     const cartItems = location.state?.cartItems || [];
     const orderTotal = location.state?.orderTotal || 0;
-    
-    // Generate a random numerical order ID
-    const orderId = Math.floor(Math.random() * 9000000000) + 1000000000;
+    const orderNumber = location.state?.orderNumber || 'N/A';
     
     return (
         <div className="completed-order-page">
@@ -19,7 +17,7 @@ const CompletedOrder = () => {
             <main className="main">
                 <h1>Your Order Has Been Placed!</h1>
                 <div className="completed-order-content">
-                    <h3>Order ID: {orderId}</h3>
+                    <h3>Order ID: {orderNumber}</h3>
                     <p>Estimated Delivery Time: 6:46pm</p>
                     
                     <div className="order-summary">

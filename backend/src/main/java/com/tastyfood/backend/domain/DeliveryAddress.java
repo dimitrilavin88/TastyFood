@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "delivery_addresses")
+@Table(name = "delivery_address")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,8 +32,8 @@ public class DeliveryAddress {
     private String state;
     
     @Column(name = "zip_code")
-    private Integer zipCode;
+    private String zipCode;
     
-    @Column(name = "instructions", length = 1000)
+    @Transient
     private String instructions;
 }

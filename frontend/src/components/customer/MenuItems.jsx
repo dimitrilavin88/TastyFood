@@ -9,12 +9,12 @@ const MenuCategoryButton = ({ category, onCategoryClick }) => {
     };
     
     return (
-        <button 
+            <button 
             className="menu-category-button"
             onClick={handleClick}
-        >
+            >
             {category.name}
-        </button>
+            </button>
     )
 }
 
@@ -62,12 +62,12 @@ const MenuItems = () => {
     const scrollToCategory = (category) => {
         // Convert category name to section ID (lowercase, replace spaces with hyphens)
         const sectionId = category.name.toLowerCase().replace(/\s+/g, '-');
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
         }
     };
 
@@ -86,7 +86,7 @@ const MenuItems = () => {
                         key={category.categoryId}
                         category={category}
                         onCategoryClick={scrollToCategory}
-                    />
+            />
                 ))
             )}
         </div>

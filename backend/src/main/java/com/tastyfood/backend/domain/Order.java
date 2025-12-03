@@ -20,6 +20,9 @@ public class Order {
     @Column(name = "order_id")
     private Integer orderId;
     
+    @Transient
+    private String orderNumber;
+    
     @Column(name = "customer_name", nullable = false)
     private String customerName;
     
@@ -43,7 +46,7 @@ public class Order {
     @Column(name = "grand_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal grandTotal;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.tastyfood.backend.converter.OrderStatusConverter.class)
     @Column(name = "status", nullable = false)
     private OrderStatus status;
     

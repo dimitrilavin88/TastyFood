@@ -21,6 +21,13 @@ public class DBInterfaceDeliveryAddressImpl implements DBInterfaceDeliveryAddres
     }
     
     @Override
+    public Optional<DeliveryAddress> findByBuildingNumberAndStreetAndCityAndStateAndZipCode(
+            Integer buildingNumber, String street, String city, String state, String zipCode) {
+        return repository.findByBuildingNumberAndStreetAndCityAndStateAndZipCode(
+            buildingNumber, street, city, state, zipCode);
+    }
+    
+    @Override
     public List<DeliveryAddress> findAll() {
         return repository.findAll();
     }

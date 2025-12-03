@@ -19,8 +19,8 @@ const ItemCards = ({ items }) => {
         if (window.addToCart) {
             // Price is already a number from the database, format it for display
             const price = typeof item.price === 'number' ? item.price : parseFloat(item.price.toString().replace('$', ''));
-            console.log('Calling addToCart with:', { name: item.name, quantity, price }); // Debug log
-            window.addToCart(item.name, quantity, price);
+            console.log('Calling addToCart with:', { name: item.name, quantity, price, itemId: item.itemId }); // Debug log
+            window.addToCart(item.name, quantity, price, item.itemId);
             // Reset quantity after adding
             setQuantities(prev => ({
                 ...prev,

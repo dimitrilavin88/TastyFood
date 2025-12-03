@@ -58,7 +58,7 @@ public class DBInterfaceDriversImpl implements DBInterfaceDrivers {
             return driver;
         } else {
             // For existing drivers, use merge
-            return repository.save(driver);
+        return repository.save(driver);
         }
     }
     

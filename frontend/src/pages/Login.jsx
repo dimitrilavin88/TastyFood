@@ -56,7 +56,7 @@ const Login = () => {
         }
         
         // Clear any previous error messages
-        setErrorMessage('');
+            setErrorMessage('');
         setIsLoading(true);
         
         try {
@@ -90,9 +90,9 @@ const Login = () => {
                     last_name: data.last_name || '',
                     role: data.role || 'staff'
                 });
-                // Redirect to dashboard
-                navigate('/dashboard');
-            } else {
+            // Redirect to dashboard
+            navigate('/dashboard');
+        } else {
                 setErrorMessage(data.message || 'Invalid username or password');
             }
         } catch (error) {
