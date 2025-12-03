@@ -214,10 +214,39 @@ export const verifyOldPassword = (username, oldPassword) => {
 };
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  // Load user from localStorage on initialization
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('tastyfood_user');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error('Error loading user from localStorage:', error);
+      return null;
+    }
+  });
+  
   const [staffUsers, setStaffUsers] = useState(STAFF_USERS);
-  const login = (user) => setUser(user);
-  const logout = () => setUser(null);
+  
+  // Login function that saves to localStorage
+  const login = (userData) => {
+    try {
+      localStorage.setItem('tastyfood_user', JSON.stringify(userData));
+      setUser(userData);
+    } catch (error) {
+      console.error('Error saving user to localStorage:', error);
+      setUser(userData); // Still set user in state even if localStorage fails
+    }
+  };
+  
+  // Logout function that clears localStorage
+  const logout = () => {
+    try {
+      localStorage.removeItem('tastyfood_user');
+    } catch (error) {
+      console.error('Error removing user from localStorage:', error);
+    }
+    setUser(null);
+  };
 
   const addStaffUser = (user) => {
     setStaffUsers([...staffUsers, user]);

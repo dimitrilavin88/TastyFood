@@ -24,7 +24,8 @@ public class DriverService {
     }
     
     public List<Driver> getAvailableDrivers() {
-        return dbInterface.findByStatus(DriverStatus.AVAILABLE);
+        // Status column doesn't exist, so return drivers that are not on delivery
+        return dbInterface.findByOnDelivery(false);
     }
     
     public List<Driver> getDriversOnDelivery() {
@@ -36,9 +37,7 @@ public class DriverService {
     }
     
     public Driver createDriver(Driver driver) {
-        if (driver.getStatus() == null) {
-            driver.setStatus(DriverStatus.AVAILABLE);
-        }
+        // Status column doesn't exist in database, so we don't set it
         if (driver.getOnDelivery() == null) {
             driver.setOnDelivery(false);
         }

@@ -1842,7 +1842,7 @@ html {
   justify-content: center;
   gap: 2rem;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
 }
 
 .manage-staff-page h1 {
@@ -1923,13 +1923,14 @@ html {
   border-radius: 15px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 600px;
-  overflow-x: auto;
+  max-width: 900px;
   flex-grow: 1;
+  overflow-x: visible;
 }
 
 .staff-list table {
   width: 100%;
+  min-width: 800px;
   border-collapse: collapse;
   margin-top: 1rem;
 }
@@ -1995,7 +1996,7 @@ html {
   }
   
   .staff-list {
-    max-width: 800px;
+    max-width: 1000px;
   }
 }
 
@@ -2027,6 +2028,11 @@ html {
   .staff-list {
     padding: 1.5rem;
     max-width: 100%;
+    overflow-x: auto;
+  }
+  
+  .staff-list table {
+    min-width: 700px;
   }
   
   .staff-list th,
@@ -2063,6 +2069,11 @@ html {
   
   .staff-list {
     padding: 1rem;
+    overflow-x: auto;
+  }
+  
+  .staff-list table {
+    min-width: 600px;
   }
   
   .staff-list th,

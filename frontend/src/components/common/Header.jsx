@@ -18,6 +18,11 @@ const Header = () => {
     navigate('/login');
   }
 
+  const goToDashboard = () => {
+    setIsMenuOpen(false);
+    navigate('/dashboard');
+  }
+
   const goToChangePassword = () => {
     setIsMenuOpen(false);
     navigate('/change-password');
@@ -68,6 +73,7 @@ const Header = () => {
                   <span className={`user-menu-arrow ${isMenuOpen ? 'open' : ''}`}>▾</span>
                 </button>
                 <div className={`user-menu-dropdown ${isMenuOpen ? 'open' : ''}`}>
+                  <button onClick={goToDashboard}>Dashboard</button>
                   <button onClick={goToChangePassword}>Change Password</button>
                   <button onClick={handleLogout}>Logout</button>
                 </div>

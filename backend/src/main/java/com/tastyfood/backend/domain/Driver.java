@@ -26,8 +26,7 @@ public class Driver {
     @Column(name = "phone_number")
     private String phoneNumber;
     
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Transient
     private DriverStatus status;
     
     @Column(name = "vehicle_description")

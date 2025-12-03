@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { useAuth, DRIVERS } from '../utils/auth.jsx';
-import generatePassword from '../utils/GeneratePassword.jsx';
+import { useAuth } from '../utils/auth.jsx';
+
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const ManageDrivers = () => {
     const {user} = useAuth();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [drivers, setDrivers] = useState(DRIVERS);
+    const [drivers, setDrivers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState('');
+
+    // Fetch drivers from backend
+    useEffect(() => {
+        fetchDrivers();
+    }, []);
+
+    const fetchDrivers = async () => {
+        try {
+            setLoading(true);
+            setFetchError('');
+            const response = await fetch(`${API_BASE_URL}/drivers`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch drivers');
+            }
+            const data = await response.json();
+            setDrivers(data);
+        } catch (error) {
+            console.error('Error fetching drivers:', error);
+            setFetchError('Failed to load drivers. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Validation functions
     const validateFirstName = (name) => {
@@ -32,7 +58,7 @@ const ManageDrivers = () => {
         return { success: true };
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validate both fields before submission
@@ -52,24 +78,71 @@ const ManageDrivers = () => {
         // Clear any error messages
         setErrorMessage('');
 
-        const isActive = true;
+        try {
+            // Create driver via API
+            const response = await fetch(`${API_BASE_URL}/drivers`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName: firstName.trim(),
+                    lastName: lastName.trim()
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to create driver');
+            }
+
+            // Refresh the driver list
+            await fetchDrivers();
+            
+            // Show success message
+            alert(`Driver hired successfully!`);
+            
+            // Clear the form
+            setFirstName('');
+            setLastName('');
+        } catch (error) {
+            console.error('Error creating driver:', error);
+            setErrorMessage(error.message || 'Failed to add driver. Please try again.');
+        }
+    }
+
+    const handleDelete = async (driverId) => {
+        const driver = drivers.find(d => d.driverId === driverId);
+        if (!driver) return;
+
+        // Extract first and last name from fullName
+        const nameParts = driver.fullName.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+
+        const confirmDelete = window.confirm(
+            `Are you sure you want to fire ${driver.fullName}? This action cannot be undone.`
+        );
         
-        // Create new driver user object
-        const newDriver = {
-            first_name: firstName,
-            last_name: lastName,
-            active: isActive
-        };
-        
-        // Add new user to the driver list
-        setDrivers(prevDrivers => [...prevDrivers, newDriver]);
-        
-        console.log('New driver added:', newDriver);
-        console.log('Updated driver list:', [...drivers, newDriver]);
-        
-        // Clear the form
-        setFirstName('');
-        setLastName('');
+        if (!confirmDelete) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/drivers/${driverId}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete driver');
+            }
+
+            // Refresh the driver list
+            await fetchDrivers();
+        } catch (error) {
+            console.error('Error deleting driver:', error);
+            alert('Failed to fire driver. Please try again.');
+        }
     }
 
     return (
@@ -119,46 +192,43 @@ const ManageDrivers = () => {
                         </form>
                     </div>
                     <div className="driver-list">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Active</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                                <tbody>
-                                    {drivers.map((driver, index) => (
-                                    <tr key={index}>
-                                        <td>{driver.first_name}</td>
-                                        <td>{driver.last_name}</td>
-                                        <td>Yes</td>
-                                        <td>
-                                            <button 
-                                                onClick={() => {
-                                                    const confirmDelete = window.confirm(
-                                                        `Are you sure you want to fire ${driver.first_name} ${driver.last_name}? This action cannot be undone.`
-                                                    );
-                                                    
-                                                    if (confirmDelete) {
-                                                        // Remove the user from the driver list
-                                                            setDrivers(prevDrivers => 
-                                                            prevDrivers.filter((_, userIndex) => userIndex !== index)
-                                                        );
-                                                        console.log(`Deleted driver: ${driver.first_name} ${driver.last_name}`);
-                                                    } else {
-                                                        console.log('Delete cancelled');
-                                                    }
-                                                }}
-                                            >
-                                                Fire
-                                            </button>
-                                        </td>
+                        {fetchError && <div className="error-message">{fetchError}</div>}
+                        {loading ? (
+                            <div>Loading drivers...</div>
+                        ) : (
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Full Name</th>
+                                        <th>On Delivery</th>
+                                        <th>Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {drivers.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="3" style={{ textAlign: 'center' }}>
+                                                No drivers found
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        drivers.map((driver) => (
+                                            <tr key={driver.driverId}>
+                                                <td>{driver.fullName}</td>
+                                                <td>{driver.onDelivery ? 'Yes' : 'No'}</td>
+                                                <td>
+                                                    <button 
+                                                        onClick={() => handleDelete(driver.driverId)}
+                                                    >
+                                                        Fire
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        )}
                     </div>
                 </div>
             </main>

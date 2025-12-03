@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { validateLogin, validateUsername, validatePassword, useAuth } from '../utils/auth.jsx';
+import { validateUsername, validatePassword, useAuth } from '../utils/auth.jsx';
 
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
@@ -36,18 +38,72 @@ const Login = () => {
         }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent form submission
-        const result = validateLogin(username, password);
         
-        if (result.success) {
-            setErrorMessage('');
-            // Set the user in the auth context
-            login(result.user);
-            // Redirect to dashboard
-            navigate('/dashboard');
-        } else {
-            setErrorMessage(result.message);
+        // Validate input format first
+        const usernameResult = validateUsername(username);
+        const passwordResult = validatePassword(password);
+        
+        if (!usernameResult.success) {
+            setErrorMessage(usernameResult.message);
+            return;
+        }
+        
+        if (!passwordResult.success) {
+            setErrorMessage(passwordResult.message);
+            return;
+        }
+        
+        // Clear any previous error messages
+        setErrorMessage('');
+        setIsLoading(true);
+        
+        try {
+            // Call backend API to authenticate
+            const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username.trim(),
+                    password: password
+                })
+            });
+            
+            if (!response.ok) {
+                // Handle non-200 responses
+                const errorData = await response.json().catch(() => ({ message: 'Server error' }));
+                setErrorMessage(errorData.message || `Server error: ${response.status}`);
+                return;
+            }
+            
+            const data = await response.json();
+            console.log('Login response:', data);
+            
+            if (data.success) {
+                // Set the user in the auth context with data from backend
+                login({
+                    username: data.username,
+                    first_name: data.first_name || '',
+                    last_name: data.last_name || '',
+                    role: data.role || 'staff'
+                });
+                // Redirect to dashboard
+                navigate('/dashboard');
+            } else {
+                setErrorMessage(data.message || 'Invalid username or password');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            if (error.message && error.message.includes('fetch')) {
+                setErrorMessage('Failed to connect to server. Please make sure the backend is running on http://localhost:8080');
+            } else {
+                setErrorMessage('An error occurred. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -81,7 +137,9 @@ const Login = () => {
                                 validateAndSetError('password');
                             }}
                         />
-                        <button type="submit" disabled={isButtonDisabled()}>Login</button>
+                        <button type="submit" disabled={isButtonDisabled() || isLoading}>
+                            {isLoading ? 'Logging in...' : 'Login'}
+                        </button>
                     </form>
                 </div>
             </main>

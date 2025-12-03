@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface DBInterfaceDrivers {
     Optional<Driver> findById(Integer driverId);
     List<Driver> findAll();
-    List<Driver> findByStatus(DriverStatus status);
+    // findByStatus removed - status column doesn't exist in database
     List<Driver> findByOnDelivery(Boolean onDelivery);
     Optional<Driver> findByCurrentOrderId(Integer orderId);
     Driver save(Driver driver);

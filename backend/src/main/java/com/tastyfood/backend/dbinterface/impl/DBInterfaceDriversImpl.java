@@ -2,10 +2,12 @@ package com.tastyfood.backend.dbinterface.impl;
 
 import com.tastyfood.backend.dbinterface.DBInterfaceDrivers;
 import com.tastyfood.backend.domain.Driver;
-import com.tastyfood.backend.enums.DriverStatus;
 import com.tastyfood.backend.repository.DriverRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,9 @@ public class DBInterfaceDriversImpl implements DBInterfaceDrivers {
     
     @Autowired
     private DriverRepository repository;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
     
     @Override
     public Optional<Driver> findById(Integer driverId) {
@@ -26,10 +31,7 @@ public class DBInterfaceDriversImpl implements DBInterfaceDrivers {
         return repository.findAll();
     }
     
-    @Override
-    public List<Driver> findByStatus(DriverStatus status) {
-        return repository.findByStatus(status);
-    }
+    // findByStatus removed - status column doesn't exist in database
     
     @Override
     public List<Driver> findByOnDelivery(Boolean onDelivery) {
@@ -42,8 +44,22 @@ public class DBInterfaceDriversImpl implements DBInterfaceDrivers {
     }
     
     @Override
+    @Transactional
     public Driver save(Driver driver) {
-        return repository.save(driver);
+        if (driver.getDriverId() == null) {
+            // For new drivers, persist and then get the ID using last_insert_rowid()
+            entityManager.persist(driver);
+            entityManager.flush();
+            // Query for the last inserted rowid
+            Object result = entityManager.createNativeQuery("SELECT last_insert_rowid()").getSingleResult();
+            if (result instanceof Number) {
+                driver.setDriverId(((Number) result).intValue());
+            }
+            return driver;
+        } else {
+            // For existing drivers, use merge
+            return repository.save(driver);
+        }
     }
     
     @Override

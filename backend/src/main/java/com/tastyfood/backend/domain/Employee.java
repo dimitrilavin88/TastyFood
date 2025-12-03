@@ -25,7 +25,7 @@ public class Employee {
     @Column(name = "last_name", nullable = false)
     private String lastName;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = com.tastyfood.backend.converter.UserTypeConverter.class)
     @Column(name = "role", nullable = false)
     private UserType role;
     

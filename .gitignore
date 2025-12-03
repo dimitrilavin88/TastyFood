@@ -140,3 +140,5 @@ target/
 # PHP (if any backend components)
 vendor/
 composer.lock
+
+.fake

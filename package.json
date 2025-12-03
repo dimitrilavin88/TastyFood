@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "concurrently -n \"FRONTEND,BACKEND\" -c \"blue,green\" \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "cd backend && mvn spring-boot:run",
+    "dev:backend": "cd backend && ./run-with-java17.sh",
     "build": "npm run build:frontend && npm run build:backend",
     "build:frontend": "cd frontend && npm run build",
-    "build:backend": "cd backend && mvn clean package",
+    "build:backend": "cd backend && export JAVA_HOME=$(/usr/libexec/java_home -v 17) && mvn clean package",
     "start": "npm run dev",
     "lint": "eslint .",
     "preview": "vite preview"

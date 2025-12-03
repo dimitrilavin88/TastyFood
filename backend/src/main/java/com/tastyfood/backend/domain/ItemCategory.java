@@ -22,6 +22,6 @@ public class ItemCategory {
     @Column(name = "display_order")
     private Integer displayOrder;
     
-    @Column(name = "is_featured", nullable = false)
+    @Column(name = "is_featured")
     private Boolean isFeatured;
 }

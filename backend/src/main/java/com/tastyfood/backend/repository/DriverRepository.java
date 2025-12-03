@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface DriverRepository extends JpaRepository<Driver, Integer> {
-    List<Driver> findByStatus(com.tastyfood.backend.enums.DriverStatus status);
+    // findByStatus removed - status column doesn't exist in database
     List<Driver> findByOnDelivery(Boolean onDelivery);
     Optional<Driver> findByCurrentOrderId(Integer orderId);
 }

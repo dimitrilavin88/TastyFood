@@ -15,8 +15,11 @@ public class LoginCredentials {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
     
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password", nullable = false)
     private String passwordHash;
+    
+    @Column(name = "usertype", nullable = false)
+    private String userType;
     
     @OneToOne
     @JoinColumn(name = "username", referencedColumnName = "username")

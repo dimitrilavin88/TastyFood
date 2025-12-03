@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { useAuth, validatePassword, verifyOldPassword } from '../utils/auth.jsx';
+import { useAuth, validatePassword } from '../utils/auth.jsx';
 import { useNavigate } from 'react-router-dom';
+
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const ChangePassword = () => {
     const { user } = useAuth();
@@ -10,20 +12,13 @@ const ChangePassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Validation function for change password
+    // Validation function for change password (client-side validation only)
     const validateChangePassword = (oldPass, newPass, confirmPass) => {
         if (!oldPass || oldPass.trim() === '') {
             return { success: false, message: 'Old password is required' };
-        }
-        
-        // Verify that the old password matches the current user's password
-        if (user && user.username) {
-            const oldPasswordResult = verifyOldPassword(user.username, oldPass);
-            if (!oldPasswordResult.success) {
-                return { success: false, message: oldPasswordResult.message };
-            }
         }
         
         const newPassResult = validatePassword(newPass);
@@ -42,16 +37,65 @@ const ChangePassword = () => {
         return { success: true };
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Client-side validation
         const result = validateChangePassword(oldPassword, newPassword, confirmPassword);
-        if (result.success) {
-            setErrorMessage('');
-            console.log('Password changed successfully');
-            // In a real app, you would update the password here
-            navigate('/dashboard');
-        } else {
+        if (!result.success) {
             setErrorMessage(result.message);
+            return;
+        }
+        
+        // Check if user is logged in
+        if (!user || !user.username) {
+            setErrorMessage('You must be logged in to change your password');
+            return;
+        }
+        
+        setErrorMessage('');
+        setIsLoading(true);
+        
+        try {
+            // Call backend API to change password
+            const response = await fetch(`${API_BASE_URL}/auth/change-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: user.username,
+                    oldPassword: oldPassword,
+                    newPassword: newPassword
+                })
+            });
+            
+            if (!response.ok) {
+                // Handle non-200 responses
+                const errorData = await response.json().catch(() => ({ message: 'Server error' }));
+                setErrorMessage(errorData.message || `Server error: ${response.status}`);
+                return;
+            }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Password changed successfully
+                setErrorMessage('');
+                alert('Password changed successfully!');
+                navigate('/dashboard');
+            } else {
+                setErrorMessage(data.message || 'Failed to change password');
+            }
+        } catch (error) {
+            console.error('Change password error:', error);
+            if (error.message && error.message.includes('fetch')) {
+                setErrorMessage('Failed to connect to server. Please make sure the backend is running on http://localhost:8080');
+            } else {
+                setErrorMessage('An error occurred. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -89,7 +133,9 @@ const ChangePassword = () => {
                             value={confirmPassword} 
                             onChange={(e) => setConfirmPassword(e.target.value)} 
                         />
-                        <button type="submit" disabled={isButtonDisabled()}>Change Password</button>
+                        <button type="submit" disabled={isButtonDisabled() || isLoading}>
+                            {isLoading ? 'Changing Password...' : 'Change Password'}
+                        </button>
                         {errorMessage && <div className="error-message">{errorMessage}</div>}
                     </form>
                 </div>

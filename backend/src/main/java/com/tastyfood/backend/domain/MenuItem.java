@@ -34,7 +34,7 @@ public class MenuItem {
     @Column(name = "image_url")
     private String imageUrl;
     
-    @Column(name = "availability", nullable = false)
+    @Column(name = "availability")
     private Boolean availability;
     
     @Column(name = "prep_time_minutes")

@@ -17,6 +17,9 @@ public class EmployeeService {
     @Autowired
     private DBInterfaceEmployees dbInterface;
     
+    @Autowired
+    private AuthenticationService authenticationService;
+    
     public Optional<Employee> getEmployeeByUsername(String username) {
         return dbInterface.findByUsername(username);
     }
@@ -41,6 +44,40 @@ public class EmployeeService {
             employee.setActiveStatus(true);
         }
         employee.setLastActiveAt(Instant.now());
+        return dbInterface.save(employee);
+    }
+    
+    /**
+     * Registers a new employee with auto-generated username and password.
+     * Creates both employee record and login credentials.
+     * 
+     * @param firstName First name of the employee
+     * @param lastName Last name of the employee
+     * @param password Password for the employee
+     * @param role Role of the employee (defaults to STAFF if null)
+     * @return Created Employee with generated username, or null if registration failed
+     */
+    public Employee registerNewEmployee(String firstName, String lastName, String password, UserType role) {
+        // Convert UserType enum to lowercase string for database
+        String userTypeStr = (role != null ? role : UserType.STAFF).name().toLowerCase();
+        
+        // Generate username and create login credentials
+        String username = authenticationService.registerEmployee(firstName, lastName, password, userTypeStr);
+        
+        if (username == null) {
+            return null; // Could not generate unique username
+        }
+        
+        // Create employee record
+        Employee employee = new Employee();
+        employee.setUsername(username);
+        employee.setFirstName(firstName);
+        employee.setLastName(lastName);
+        employee.setRole(role != null ? role : UserType.STAFF);
+        employee.setActiveStatus(true);
+        employee.setHireDate(LocalDate.now());
+        employee.setLastActiveAt(Instant.now());
+        
         return dbInterface.save(employee);
     }
     
