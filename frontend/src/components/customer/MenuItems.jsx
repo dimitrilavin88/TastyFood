@@ -1,101 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-// Individual menu category component
-const MenuCategory = ({ title, items, onItemClick }) => {
-    const [open, setOpen] = useState(false);
-    
-    const handleItemClick = (item) => {
-        onItemClick(item);
-        setOpen(false); // Close the dropdown after clicking
+const API_BASE_URL = 'http://localhost:8080/api';
+
+// Individual menu category button component
+const MenuCategoryButton = ({ category, onCategoryClick }) => {
+    const handleClick = () => {
+        onCategoryClick(category);
     };
     
     return (
-        <div className={`menu-category ${open ? 'open' : ''}`}>
-            <button 
-                className="menu-category-header"
-                onClick={() => setOpen(!open)}
-            >
-                {title}
-                <span className="menu-category-arrow">▼</span>
-            </button>
-            <div className="menu-category-items">
-                <ul>
-                    {items.map((item, index) => (
-                        <li key={index} onClick={() => handleItemClick(item)} style={{cursor: 'pointer'}}>
-                            {item}
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </div>
+        <button 
+            className="menu-category-button"
+            onClick={handleClick}
+        >
+            {category.name}
+        </button>
     )
 }
 
 // Main MenuItems component
 const MenuItems = () => {
-    const scrollToSection = (itemName) => {
-        // Map item names to section IDs
-        const sectionMap = {
-            // Appetizers
-            "Mozzarella Sticks": "appetizers",
-            "Chicken Wings": "appetizers", 
-            "Fried Pickles": "appetizers",
-            "Onion Rings": "appetizers",
-            
-            // Main Courses
-            "Grilled Salmon": "main-courses",
-            "Chicken Parmesan": "main-courses",
-            "Beef Lasagna": "main-courses", 
-            "Vegetable Stir-Fry": "main-courses",
-            
-            // Desserts
-            "Cheesecake": "desserts",
-            "Ice Cream": "desserts",
-            "Chocolate Lava Cake": "desserts",
-            "Fruit Salad": "desserts",
-            
-            // Beverages
-            "Soda": "beverages",
-            "Water": "beverages",
-            "Coffee": "beverages",
-            "Tea": "beverages"
-        };
-        
-        const sectionId = sectionMap[itemName];
-        if (sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+            setError('');
+            const response = await fetch(`${API_BASE_URL}/menu/categories`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch categories');
             }
+            const data = await response.json();
+            // Sort categories by displayOrder if available, otherwise by name
+            const sortedCategories = data.sort((a, b) => {
+                if (a.displayOrder !== null && b.displayOrder !== null) {
+                    return a.displayOrder - b.displayOrder;
+                }
+                if (a.displayOrder !== null) return -1;
+                if (b.displayOrder !== null) return 1;
+                return a.name.localeCompare(b.name);
+            });
+            setCategories(sortedCategories);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            setError('Failed to load menu categories');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const scrollToCategory = (category) => {
+        // Convert category name to section ID (lowercase, replace spaces with hyphens)
+        const sectionId = category.name.toLowerCase().replace(/\s+/g, '-');
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
     };
 
     return (
         <div className="menu-items">
             <h2>Our Menu</h2>
-            <MenuCategory 
-                title="Appetizers" 
-                items={["Mozzarella Sticks", "Chicken Wings", "Fried Pickles", "Onion Rings"]}
-                onItemClick={scrollToSection}
-            />
-            <MenuCategory 
-                title="Main Courses" 
-                items={["Grilled Salmon", "Chicken Parmesan", "Beef Lasagna", "Vegetable Stir-Fry"]}
-                onItemClick={scrollToSection}
-            />
-            <MenuCategory 
-                title="Desserts" 
-                items={["Cheesecake", "Ice Cream", "Chocolate Lava Cake", "Fruit Salad"]}
-                onItemClick={scrollToSection}
-            />
-            <MenuCategory 
-                title="Beverages" 
-                items={["Soda", "Water", "Coffee", "Tea"]}
-                onItemClick={scrollToSection}
-            />
+            {loading ? (
+                <div>Loading categories...</div>
+            ) : error ? (
+                <div className="error-message">{error}</div>
+            ) : categories.length === 0 ? (
+                <div>No categories found</div>
+            ) : (
+                categories.map((category) => (
+                    <MenuCategoryButton 
+                        key={category.categoryId}
+                        category={category}
+                        onCategoryClick={scrollToCategory}
+                    />
+                ))
+            )}
         </div>
     )
 }

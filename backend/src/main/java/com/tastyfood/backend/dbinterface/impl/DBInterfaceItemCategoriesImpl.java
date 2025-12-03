@@ -25,10 +25,7 @@ public class DBInterfaceItemCategoriesImpl implements DBInterfaceItemCategories 
         return repository.findAll();
     }
     
-    @Override
-    public List<ItemCategory> findByIsFeatured(Boolean isFeatured) {
-        return repository.findByIsFeatured(isFeatured);
-    }
+    // findByIsFeatured removed - is_featured column doesn't exist in database
     
     @Override
     public List<ItemCategory> findAllByOrderByDisplayOrderAsc() {

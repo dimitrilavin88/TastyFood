@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface DBInterfaceItemCategories {
     Optional<ItemCategory> findById(Integer categoryId);
     List<ItemCategory> findAll();
-    List<ItemCategory> findByIsFeatured(Boolean isFeatured);
+    // findByIsFeatured removed - is_featured column doesn't exist in database
     List<ItemCategory> findAllByOrderByDisplayOrderAsc();
     ItemCategory save(ItemCategory category);
     void deleteById(Integer categoryId);

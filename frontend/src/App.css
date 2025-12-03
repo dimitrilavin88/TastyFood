@@ -925,6 +925,38 @@ html {
   border-bottom: none;
 }
 
+/* Menu category button styles */
+.menu-category-button {
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: white;
+  padding: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  text-transform: capitalize;
+}
+
+.menu-category-button:hover {
+  background: linear-gradient(135deg, #f7931e, #ff6b35);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 107, 53, 0.3);
+}
+
+.menu-category-button:focus {
+  outline: 2px solid #ff6b35;
+  outline-offset: 2px;
+}
+
+.menu-category-button:active {
+  transform: translateY(0);
+}
+
 /* Adjust main content when menu aside is present */
 .menu-page .main {
   position: relative;

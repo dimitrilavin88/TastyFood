@@ -25,7 +25,8 @@ public class MenuService {
     }
     
     public List<ItemCategory> getFeaturedCategories() {
-        return categoryDbInterface.findByIsFeatured(true);
+        // is_featured column doesn't exist in database, return empty list
+        return List.of();
     }
     
     public List<ItemCategory> getCategoriesOrdered() {

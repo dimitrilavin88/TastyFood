@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface ItemCategoryRepository extends JpaRepository<ItemCategory, Integer> {
-    List<ItemCategory> findByIsFeatured(Boolean isFeatured);
+    // findByIsFeatured removed - is_featured column doesn't exist in database
     List<ItemCategory> findAllByOrderByDisplayOrderAsc();
 }
