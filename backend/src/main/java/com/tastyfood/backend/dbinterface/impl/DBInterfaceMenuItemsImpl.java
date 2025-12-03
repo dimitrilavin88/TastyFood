@@ -31,16 +31,6 @@ public class DBInterfaceMenuItemsImpl implements DBInterfaceMenuItems {
     }
     
     @Override
-    public List<MenuItem> findByAvailability(Boolean availability) {
-        return repository.findByAvailability(availability);
-    }
-    
-    @Override
-    public List<MenuItem> findByCategoryIdAndAvailability(Integer categoryId, Boolean availability) {
-        return repository.findByCategoryIdAndAvailability(categoryId, availability);
-    }
-    
-    @Override
     public MenuItem save(MenuItem menuItem) {
         return repository.save(menuItem);
     }

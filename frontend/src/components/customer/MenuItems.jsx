@@ -34,9 +34,12 @@ const MenuItems = () => {
             setError('');
             const response = await fetch(`${API_BASE_URL}/menu/categories`);
             if (!response.ok) {
-                throw new Error('Failed to fetch categories');
+                const errorText = await response.text();
+                console.error('Categories API error:', response.status, errorText);
+                throw new Error(`Failed to fetch categories: ${response.status}`);
             }
             const data = await response.json();
+            console.log('MenuItems - Fetched categories:', data);
             // Sort categories by displayOrder if available, otherwise by name
             const sortedCategories = data.sort((a, b) => {
                 if (a.displayOrder !== null && b.displayOrder !== null) {
@@ -46,10 +49,11 @@ const MenuItems = () => {
                 if (b.displayOrder !== null) return 1;
                 return a.name.localeCompare(b.name);
             });
+            console.log('MenuItems - Sorted categories:', sortedCategories);
             setCategories(sortedCategories);
         } catch (error) {
             console.error('Error fetching categories:', error);
-            setError('Failed to load menu categories');
+            setError(`Failed to load menu categories: ${error.message}`);
         } finally {
             setLoading(false);
         }

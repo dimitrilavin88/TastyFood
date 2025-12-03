@@ -9,6 +9,4 @@ import java.util.List;
 @Repository
 public interface MenuItemRepository extends JpaRepository<MenuItem, Integer> {
     List<MenuItem> findByCategoryId(Integer categoryId);
-    List<MenuItem> findByAvailability(Boolean availability);
-    List<MenuItem> findByCategoryIdAndAvailability(Integer categoryId, Boolean availability);
 }

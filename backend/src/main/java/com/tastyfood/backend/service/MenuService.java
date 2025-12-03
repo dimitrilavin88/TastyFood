@@ -67,17 +67,17 @@ public class MenuService {
     }
     
     public List<MenuItem> getAvailableMenuItems() {
-        return menuItemDbInterface.findByAvailability(true);
+        // availability column doesn't exist in database, return all items
+        return menuItemDbInterface.findAll();
     }
     
     public List<MenuItem> getAvailableMenuItemsByCategory(Integer categoryId) {
-        return menuItemDbInterface.findByCategoryIdAndAvailability(categoryId, true);
+        // availability column doesn't exist in database, return all items by category
+        return menuItemDbInterface.findByCategoryId(categoryId);
     }
     
     public MenuItem createMenuItem(MenuItem menuItem) {
-        if (menuItem.getAvailability() == null) {
-            menuItem.setAvailability(true);
-        }
+        // availability is @Transient, so we don't need to set it
         return menuItemDbInterface.save(menuItem);
     }
     

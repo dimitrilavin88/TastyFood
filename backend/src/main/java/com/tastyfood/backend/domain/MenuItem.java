@@ -1,5 +1,6 @@
 package com.tastyfood.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class MenuItem {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @JsonIgnore
     private ItemCategory category;
     
     @Column(name = "name", nullable = false)
@@ -34,7 +36,7 @@ public class MenuItem {
     @Column(name = "image_url")
     private String imageUrl;
     
-    @Column(name = "availability")
+    @Transient
     private Boolean availability;
     
     @Column(name = "prep_time_minutes")
