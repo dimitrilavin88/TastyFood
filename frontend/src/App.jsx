@@ -2,6 +2,7 @@ import './App.css'
 import Header from './components/common/header'
 import Footer from './components/common/Footer'
 import { Routes, Route, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import Menu from './pages/Menu.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
@@ -15,43 +16,83 @@ import RecordDelivery from './pages/RecordDelivery.jsx'
 import OrderConfirmation from './pages/OrderConfirmation.jsx'
 import DeliveryInfo from './pages/DeliveryInfo.jsx'
 import CompletedOrder from './pages/CompletedOrder.jsx'
+
+const API_BASE_URL = 'http://localhost:8080/api';
+
 // Home page component
 const Home = () => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [menuItems, setMenuItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   
-  const handleMenuItemClick = (itemName) => {
-    // Map item names to section IDs (same as in MenuItems component)
-    const sectionMap = {
-      // Appetizers
-      "Mozzarella Sticks": "appetizers",
-      "Chicken Wings": "appetizers", 
-      "Fried Pickles": "appetizers",
-      "Onion Rings": "appetizers",
-      
-      // Main Courses
-      "Grilled Salmon": "main-courses",
-      "Chicken Parmesan": "main-courses",
-      "Beef Lasagna": "main-courses", 
-      "Vegetable Stir-Fry": "main-courses",
-      
-      // Desserts
-      "Cheesecake": "desserts",
-      "Ice Cream": "desserts",
-      "Chocolate Lava Cake": "desserts",
-      "Fruit Salad": "desserts",
-      
-      // Beverages
-      "Soda": "beverages",
-      "Water": "beverages",
-      "Coffee": "beverages",
-      "Tea": "beverages"
-    };
-    
-    const sectionId = sectionMap[itemName];
-    if (sectionId) {
-      // Navigate to menu page with section parameter
-      navigate(`/menu?section=${sectionId}`);
+  useEffect(() => {
+    fetchMenuData();
+  }, []);
+
+  const fetchMenuData = async () => {
+    try {
+      setLoading(true);
+      const [categoriesResponse, itemsResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/menu/categories`),
+        fetch(`${API_BASE_URL}/menu/items`)
+      ]);
+
+      if (!categoriesResponse.ok || !itemsResponse.ok) {
+        throw new Error('Failed to fetch menu data');
+      }
+
+      const categoriesData = await categoriesResponse.json();
+      const itemsData = await itemsResponse.json();
+
+      // Sort categories by displayOrder if available, otherwise by name
+      const sortedCategories = categoriesData.sort((a, b) => {
+        if (a.displayOrder !== null && b.displayOrder !== null) {
+          return a.displayOrder - b.displayOrder;
+        }
+        if (a.displayOrder !== null) return -1;
+        if (b.displayOrder !== null) return 1;
+        return a.name.localeCompare(b.name);
+      });
+
+      setCategories(sortedCategories);
+      setMenuItems(itemsData);
+    } catch (error) {
+      console.error('Error fetching menu data:', error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Get first 2 items for each category
+  const getFeaturedItemsByCategory = (categoryId) => {
+    return menuItems
+      .filter(item => {
+        const itemCatId = typeof item.categoryId === 'number' ? item.categoryId : parseInt(item.categoryId);
+        const catId = typeof categoryId === 'number' ? categoryId : parseInt(categoryId);
+        return itemCatId === catId;
+      })
+      .slice(0, 2); // Get first 2 items
+  };
+
+  // Convert category name to section ID (lowercase, replace spaces with hyphens)
+  const getSectionId = (categoryName) => {
+    return categoryName.toLowerCase().replace(/\s+/g, '-');
+  };
+
+  // Capitalize category name for display
+  const capitalizeCategoryName = (name) => {
+    if (!name) return '';
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  const handleMenuItemClick = (itemName, categoryName) => {
+    // Navigate to menu page with section parameter based on category
+    const sectionId = getSectionId(categoryName);
+    navigate(`/menu?section=${sectionId}`);
   };
 
   return (
@@ -67,60 +108,38 @@ const Home = () => {
             </div>
             <div className="menu-preview">
               <h3>Featured Menu Items</h3>
-              <div className="menu-preview-grid">
-                <div className="menu-preview-category">
-                  <h4>Appetizers</h4>
-                  <div className="preview-items">
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Mozzarella Sticks")} style={{cursor: 'pointer'}}>
-                      <img src="https://static01.nyt.com/images/2024/02/08/multimedia/ND-mozzarella-sticks-pvfm/ND-mozzarella-sticks-pvfm-mediumSquareAt3X.jpg" alt="Mozzarella Sticks" />
-                      <span>Mozzarella Sticks</span>
-                    </div>
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Chicken Wings")} style={{cursor: 'pointer'}}>
-                      <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=400&h=300&fit=crop&auto=format" alt="Chicken Wings" />
-                      <span>Chicken Wings</span>
-                    </div>
-                  </div>
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '2rem' }}>Loading menu items...</div>
+              ) : (
+                <div className="menu-preview-grid">
+                  {categories.map((category) => {
+                    const featuredItems = getFeaturedItemsByCategory(category.categoryId);
+                    if (featuredItems.length === 0) return null; // Don't render empty categories
+                    
+                    return (
+                      <div key={category.categoryId} className="menu-preview-category">
+                        <h4>{capitalizeCategoryName(category.name)}</h4>
+                        <div className="preview-items">
+                          {featuredItems.map((item) => (
+                            <div 
+                              key={item.itemId} 
+                              className="preview-item" 
+                              onClick={() => handleMenuItemClick(item.name, category.name)} 
+                              style={{cursor: 'pointer'}}
+                            >
+                              <img 
+                                src={item.imageUrl || 'https://via.placeholder.com/300'} 
+                                alt={item.name} 
+                              />
+                              <span>{item.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="menu-preview-category">
-                  <h4>Main Courses</h4>
-                  <div className="preview-items">
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Grilled Salmon")} style={{cursor: 'pointer'}}>
-                      <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop" alt="Grilled Salmon" />
-                      <span>Grilled Salmon</span>
-                    </div>
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Chicken Parmesan")} style={{cursor: 'pointer'}}>
-                      <img src="https://tastesbetterfromscratch.com/wp-content/uploads/2023/03/Chicken-Parmesan-1.jpg" alt="Chicken Parmesan" />
-                      <span>Chicken Parmesan</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="menu-preview-category">
-                  <h4>Desserts</h4>
-                  <div className="preview-items">
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Cheesecake")} style={{cursor: 'pointer'}}>
-                      <img src="https://therecipecritic.com/wp-content/uploads/2021/04/newyorkcheesecake.jpg" alt="Cheesecake" />
-                      <span>Cheesecake</span>
-                    </div>
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Chocolate Lava Cake")} style={{cursor: 'pointer'}}>
-                      <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=300&fit=crop" alt="Chocolate Lava Cake" />
-                      <span>Chocolate Lava Cake</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="menu-preview-category">
-                  <h4>Beverages</h4>
-                  <div className="preview-items">
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Coffee")} style={{cursor: 'pointer'}}>
-                      <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&h=300&fit=crop" alt="Coffee" />
-                      <span>Coffee</span>
-                    </div>
-                    <div className="preview-item" onClick={() => handleMenuItemClick("Soda")} style={{cursor: 'pointer'}}>
-                      <img src="https://images.unsplash.com/photo-1581636625402-29b2a704ef13?w=400&h=300&fit=crop" alt="Soda" />
-                      <span>Soda</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
