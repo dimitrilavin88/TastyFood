@@ -4,12 +4,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class OrderItemId implements Serializable {
-    private Integer orderId;
+    private String orderId;
     private Integer itemId;
     
     public OrderItemId() {}
     
-    public OrderItemId(Integer orderId, Integer itemId) {
+    public OrderItemId(String orderId, Integer itemId) {
         this.orderId = orderId;
         this.itemId = itemId;
     }
@@ -28,8 +28,8 @@ public class OrderItemId implements Serializable {
         return Objects.hash(orderId, itemId);
     }
     
-    public Integer getOrderId() { return orderId; }
-    public void setOrderId(Integer orderId) { this.orderId = orderId; }
+    public String getOrderId() { return orderId; }
+    public void setOrderId(String orderId) { this.orderId = orderId; }
     
     public Integer getItemId() { return itemId; }
     public void setItemId(Integer itemId) { this.itemId = itemId; }

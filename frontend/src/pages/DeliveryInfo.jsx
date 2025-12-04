@@ -14,6 +14,8 @@ const DeliveryInfo = () => {
     // Get cart items from navigation state
     const cartItems = location.state?.cartItems || [];
     const orderTotal = location.state?.orderTotal || 0;
+    const tipAmount = location.state?.tipAmount || 0;
+    const subtotal = location.state?.subtotal || 0;
     
     // Form data state
     const [formData, setFormData] = useState({
@@ -119,6 +121,7 @@ const DeliveryInfo = () => {
             const orderData = {
                 customerName: formData.name,
                 customerPhone: formData.phone,
+                tip: tipAmount, // Include tip amount
                 items: cartItems.map(item => ({
                     itemId: item.itemId,
                     quantity: item.quantity,
@@ -157,7 +160,7 @@ const DeliveryInfo = () => {
                     formData, 
                     cartItems, 
                     orderTotal,
-                    orderNumber: createdOrder.orderNumber,
+                    orderNumber: createdOrder.orderId, // orderId is now the FD#### format
                     orderId: createdOrder.orderId
                 } 
             });

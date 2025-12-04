@@ -16,12 +16,8 @@ import java.time.Instant;
 @AllArgsConstructor
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Integer orderId;
-    
-    @Transient
-    private String orderNumber;
+    @Column(name = "order_id", length = 6)
+    private String orderId;
     
     @Column(name = "customer_name", nullable = false)
     private String customerName;

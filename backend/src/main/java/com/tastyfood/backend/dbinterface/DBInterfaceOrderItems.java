@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface DBInterfaceOrderItems {
     List<OrderItem> findAll();
-    List<OrderItem> findByOrderId(Integer orderId);
+    List<OrderItem> findByOrderId(String orderId);
     List<OrderItem> findByItemId(Integer itemId);
     OrderItem save(OrderItem orderItem);
     void delete(OrderItem orderItem);
-    void deleteByOrderId(Integer orderId);
+    void deleteByOrderId(String orderId);
 }

@@ -5,7 +5,7 @@ import mastercardImage from '../../assets/mastercard.png';
 import amexImage from '../../assets/amex.png';
 import discoverImage from '../../assets/discover.png';
 
-const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems }) => {
+const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems, tipAmount = 0, subtotal = 0 }) => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         cardOwner: '',
@@ -400,7 +400,7 @@ const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems
                                     setIsProcessing(true);
                                     setTimeout(() => {
                                         setIsProcessing(false);
-                                        navigate('/delivery-info', { state: { cartItems, orderTotal } });
+                                        navigate('/delivery-info', { state: { cartItems, orderTotal, tipAmount, subtotal } });
                                         onClose();
                                     }, 1000);
                                 }

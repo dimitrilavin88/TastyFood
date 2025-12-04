@@ -17,7 +17,7 @@ public class DBInterfaceOrdersImpl implements DBInterfaceOrders {
     private OrderRepository repository;
     
     @Override
-    public Optional<Order> findById(Integer orderId) {
+    public Optional<Order> findById(String orderId) {
         return repository.findById(orderId);
     }
     
@@ -47,12 +47,12 @@ public class DBInterfaceOrdersImpl implements DBInterfaceOrders {
     }
     
     @Override
-    public void deleteById(Integer orderId) {
+    public void deleteById(String orderId) {
         repository.deleteById(orderId);
     }
     
     @Override
-    public boolean existsById(Integer orderId) {
+    public boolean existsById(String orderId) {
         return repository.existsById(orderId);
     }
 }

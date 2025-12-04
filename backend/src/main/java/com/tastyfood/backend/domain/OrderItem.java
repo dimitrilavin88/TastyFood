@@ -15,8 +15,8 @@ import java.math.BigDecimal;
 @IdClass(OrderItemId.class)
 public class OrderItem {
     @Id
-    @Column(name = "order_id", nullable = false)
-    private Integer orderId;
+    @Column(name = "order_id", nullable = false, length = 6)
+    private String orderId;
     
     @Id
     @Column(name = "item_id", nullable = false)

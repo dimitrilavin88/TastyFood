@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, com.tastyfood.backend.domain.OrderItemId> {
-    List<OrderItem> findByOrderId(Integer orderId);
+    List<OrderItem> findByOrderId(String orderId);
     List<OrderItem> findByItemId(Integer itemId);
 }

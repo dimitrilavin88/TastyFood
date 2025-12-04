@@ -91,6 +91,8 @@ const OrderConfirmation = () => {
                 onPaymentSuccess={handlePaymentSuccess}
                 orderTotal={grandTotal}
                 cartItems={cartItems}
+                tipAmount={tipAmount}
+                subtotal={cartTotal + serviceFee}
             />
         </div>
     )

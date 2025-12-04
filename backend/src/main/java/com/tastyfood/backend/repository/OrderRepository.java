@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Integer> {
+public interface OrderRepository extends JpaRepository<Order, String> {
     List<Order> findByStatus(OrderStatus status);
     List<Order> findByDriverId(Integer driverId);
-    Optional<Order> findByOrderId(Integer orderId);
+    Optional<Order> findByOrderId(String orderId);
     List<Order> findAllByOrderByCreatedAtDesc();
 }

@@ -20,7 +20,7 @@ public class DBInterfaceOrderItemsImpl implements DBInterfaceOrderItems {
     }
     
     @Override
-    public List<OrderItem> findByOrderId(Integer orderId) {
+    public List<OrderItem> findByOrderId(String orderId) {
         return repository.findByOrderId(orderId);
     }
     
@@ -40,7 +40,7 @@ public class DBInterfaceOrderItemsImpl implements DBInterfaceOrderItems {
     }
     
     @Override
-    public void deleteByOrderId(Integer orderId) {
+    public void deleteByOrderId(String orderId) {
         List<OrderItem> items = repository.findByOrderId(orderId);
         repository.deleteAll(items);
     }

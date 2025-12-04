@@ -31,71 +31,53 @@ public class OrderService {
     private DeliveryAddressService deliveryAddressService;
     
     /**
-     * Generates an order number in the format FD#### based on orderId
-     * Uses a deterministic but seemingly random approach to convert orderId to 4 digits
-     * @param orderId The order ID to convert
-     * @return An order number string in format FD####
+     * Generates a unique order ID in the format FD####
+     * @return A unique order ID string in format FD####
      */
-    private String generateOrderNumberFromId(Integer orderId) {
-        // Use orderId to generate a 4-digit number (0-9999)
-        // We'll use a combination of orderId and a simple hash to make it look more random
-        // This ensures uniqueness while appearing random
-        int hash = (orderId * 7919 + 12345) % 10000; // Prime number multiplication for better distribution
-        if (hash < 0) hash = -hash; // Ensure positive
-        return String.format("FD%04d", hash);
+    private String generateUniqueOrderId() {
+        java.util.Random random = new java.util.Random();
+        String orderId;
+        int maxAttempts = 100; // Prevent infinite loop
+        int attempts = 0;
+        
+        do {
+            // Generate 4 random digits
+            int randomDigits = random.nextInt(10000); // 0-9999
+            orderId = String.format("FD%04d", randomDigits);
+            attempts++;
+            
+            if (attempts >= maxAttempts) {
+                throw new RuntimeException("Unable to generate unique order ID after " + maxAttempts + " attempts");
+            }
+        } while (orderDbInterface.existsById(orderId));
+        
+        return orderId;
     }
     
     public List<Order> getAllOrders() {
-        List<Order> orders = orderDbInterface.findAllByOrderByCreatedAtDesc();
-        // Generate order numbers for all orders
-        orders.forEach(order -> {
-            if (order.getOrderNumber() == null && order.getOrderId() != null) {
-                order.setOrderNumber(generateOrderNumberFromId(order.getOrderId()));
-            }
-        });
-        return orders;
+        return orderDbInterface.findAllByOrderByCreatedAtDesc();
     }
     
-    public Optional<Order> getOrderById(Integer orderId) {
-        Optional<Order> orderOpt = orderDbInterface.findById(orderId);
-        // Generate order number if it doesn't exist
-        orderOpt.ifPresent(order -> {
-            if (order.getOrderNumber() == null && order.getOrderId() != null) {
-                order.setOrderNumber(generateOrderNumberFromId(order.getOrderId()));
-            }
-        });
-        return orderOpt;
+    public Optional<Order> getOrderById(String orderId) {
+        return orderDbInterface.findById(orderId);
     }
     
     public List<Order> getOrdersByStatus(OrderStatus status) {
-        List<Order> orders = orderDbInterface.findByStatus(status);
-        // Generate order numbers for all orders
-        orders.forEach(order -> {
-            if (order.getOrderNumber() == null && order.getOrderId() != null) {
-                order.setOrderNumber(generateOrderNumberFromId(order.getOrderId()));
-            }
-        });
-        return orders;
+        return orderDbInterface.findByStatus(status);
     }
     
     public List<Order> getOrdersByDriver(Integer driverId) {
-        List<Order> orders = orderDbInterface.findByDriverId(driverId);
-        // Generate order numbers for all orders
-        orders.forEach(order -> {
-            if (order.getOrderNumber() == null && order.getOrderId() != null) {
-                order.setOrderNumber(generateOrderNumberFromId(order.getOrderId()));
-            }
-        });
-        return orders;
+        return orderDbInterface.findByDriverId(driverId);
     }
     
     @Transactional
     public Order createOrder(Order order, List<OrderItem> orderItems, DeliveryAddress deliveryAddress) {
         order.setCreatedAt(Instant.now());
         order.setLastUpdatedAt(Instant.now());
-        if (order.getStatus() == null) {
-            order.setStatus(OrderStatus.PENDING);
-        }
+        // Always set status to PENDING for new orders
+        order.setStatus(OrderStatus.PENDING);
+        // Ensure delivered_at is null for new orders (will be set later when order is delivered)
+        order.setDeliveredAt(null);
         
         // Find or create delivery address
         if (deliveryAddress != null) {
@@ -103,6 +85,10 @@ public class OrderService {
             order.setDeliveryAddress(savedAddress);
             order.setAddressId(savedAddress.getAddressId());
         }
+        
+        // Generate unique order ID in FD#### format
+        String orderId = generateUniqueOrderId();
+        order.setOrderId(orderId);
         
         // Calculate totals
         BigDecimal subtotal = orderItems.stream()
@@ -113,14 +99,29 @@ public class OrderService {
         BigDecimal tip = order.getTip() != null ? order.getTip() : BigDecimal.ZERO;
         order.setGrandTotal(subtotal.add(tip));
         
+        // Save the order to the database first
         Order savedOrder = orderDbInterface.save(order);
         
-        // Generate order number based on the saved orderId (after it's been generated by the database)
-        savedOrder.setOrderNumber(generateOrderNumberFromId(savedOrder.getOrderId()));
-        
-        // Save order items
+        // Save each order item to the order_items table
+        // Each item is linked to the order via order_id
         for (OrderItem item : orderItems) {
+            // Set the order_id to link this item to the saved order
             item.setOrderId(savedOrder.getOrderId());
+            // Ensure all required fields are set
+            if (item.getQuantity() == null || item.getQuantity() <= 0) {
+                throw new IllegalArgumentException("Order item quantity must be greater than 0");
+            }
+            if (item.getItemId() == null) {
+                throw new IllegalArgumentException("Order item must have an item_id");
+            }
+            if (item.getUnitPrice() == null) {
+                throw new IllegalArgumentException("Order item must have a unit_price");
+            }
+            if (item.getLineTotal() == null) {
+                // Calculate line total if not set
+                item.setLineTotal(item.getUnitPrice().multiply(new BigDecimal(item.getQuantity())));
+            }
+            // Save the order item to the order_items table
             orderItemDbInterface.save(item);
         }
         
@@ -133,12 +134,12 @@ public class OrderService {
         return orderDbInterface.save(order);
     }
     
-    public List<OrderItem> getOrderItems(Integer orderId) {
+    public List<OrderItem> getOrderItems(String orderId) {
         return orderItemDbInterface.findByOrderId(orderId);
     }
     
     @Transactional
-    public boolean deleteOrder(Integer orderId) {
+    public boolean deleteOrder(String orderId) {
         if (!orderDbInterface.existsById(orderId)) {
             return false;
         }

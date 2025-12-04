@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class OrderController {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrder(@PathVariable Integer id) {
+    public ResponseEntity<Order> getOrder(@PathVariable String id) {
         Optional<Order> order = orderService.getOrderById(id);
         return order.map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
@@ -40,7 +41,7 @@ public class OrderController {
     }
     
     @GetMapping("/{id}/items")
-    public ResponseEntity<List<OrderItem>> getOrderItems(@PathVariable Integer id) {
+    public ResponseEntity<List<OrderItem>> getOrderItems(@PathVariable String id) {
         return ResponseEntity.ok(orderService.getOrderItems(id));
     }
     
@@ -49,6 +50,20 @@ public class OrderController {
         Order order = new Order();
         order.setCustomerName((String) request.get("customerName"));
         order.setCustomerPhone((String) request.get("customerPhone"));
+        
+        // Extract tip amount
+        Object tipObj = request.get("tip");
+        if (tipObj != null) {
+            try {
+                BigDecimal tip = new BigDecimal(tipObj.toString());
+                order.setTip(tip);
+            } catch (NumberFormatException e) {
+                // If tip is invalid, set to zero
+                order.setTip(BigDecimal.ZERO);
+            }
+        } else {
+            order.setTip(BigDecimal.ZERO);
+        }
         
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> itemsData = (List<Map<String, Object>>) request.get("items");
@@ -94,13 +109,13 @@ public class OrderController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Integer id, @RequestBody Order order) {
+    public ResponseEntity<Order> updateOrder(@PathVariable String id, @RequestBody Order order) {
         order.setOrderId(id);
         return ResponseEntity.ok(orderService.updateOrder(order));
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteOrder(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, String>> deleteOrder(@PathVariable String id) {
         Map<String, String> response = new HashMap<>();
         if (orderService.deleteOrder(id)) {
             response.put("message", "Order deleted successfully");
