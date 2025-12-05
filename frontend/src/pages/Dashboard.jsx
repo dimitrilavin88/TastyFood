@@ -1,12 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
-import { DRIVERS, useAuth } from '../utils/auth.jsx';
+import { useAuth } from '../utils/auth.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const RetrieveOrderDashboardSection = () => {
     const [driver, setDriver] = useState('');
-    const [deliveryTime, setDeliveryTime] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isFadingOut, setIsFadingOut] = useState(false);
     const [queueSuccessMessage, setQueueSuccessMessage] = useState('');
@@ -14,7 +13,9 @@ const RetrieveOrderDashboardSection = () => {
     const [currentOrder, setCurrentOrder] = useState(null);
     const [orderItems, setOrderItems] = useState([]);
     const [deliveryAddress, setDeliveryAddress] = useState(null);
+    const [availableDrivers, setAvailableDrivers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [driversLoading, setDriversLoading] = useState(true);
     const timeoutRefs = useRef([]);
     
     const API_BASE_URL = 'http://localhost:8080/api';
@@ -30,7 +31,26 @@ const RetrieveOrderDashboardSection = () => {
 
     useEffect(() => {
         fetchMostRecentPendingOrder();
+        fetchAvailableDrivers();
     }, []);
+    
+    const fetchAvailableDrivers = async () => {
+        try {
+            setDriversLoading(true);
+            const response = await fetch(`${API_BASE_URL}/drivers/available`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch available drivers');
+            }
+            const drivers = await response.json();
+            console.log('Fetched available drivers:', drivers);
+            setAvailableDrivers(drivers);
+        } catch (error) {
+            console.error('Error fetching available drivers:', error);
+            setAvailableDrivers([]);
+        } finally {
+            setDriversLoading(false);
+        }
+    };
 
     const fetchMostRecentPendingOrder = async () => {
         try {
@@ -127,22 +147,9 @@ const RetrieveOrderDashboardSection = () => {
         return timeout;
     };
 
-    const generateRandomDeliveryTime = () => {
-        const minTime = 15;
-        const maxTime = 45;
-        return Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
-    };
-
     const handleDriverChange = (e) => {
         const selectedDriver = e.target.value;
         setDriver(selectedDriver);
-
-        if (selectedDriver) {
-            const randomTime = generateRandomDeliveryTime();
-            setDeliveryTime(randomTime);
-        } else {
-            setDeliveryTime('');
-        }
     };
 
     const handleAssignDriver = () => {
@@ -302,41 +309,32 @@ const RetrieveOrderDashboardSection = () => {
                 <div className="dashboard-card assign-card">
                     <div className="dashboard-card-header">
                         <h3>Assign Driver</h3>
-                        <p className="dashboard-meta muted">Select driver &amp; confirm ETA</p>
+                        <p className="dashboard-meta muted">Select an available driver</p>
                     </div>
-                    <div className="form-grid compact">
-                        <div className="form-field">
-                            <label htmlFor="dashboard-driver">Driver</label>
-                            <select
-                                id="dashboard-driver"
-                                value={driver}
-                                onChange={handleDriverChange}
-                                className="dashboard-input"
-                            >
-                                <option value="">Select a driver</option>
-                                {DRIVERS.map((driverItem, index) => (
-                                    <option key={index} value={`${driverItem.first_name} ${driverItem.last_name}`}>
-                                        {driverItem.first_name} {driverItem.last_name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-field">
-                            <label htmlFor="dashboard-delivery-time">ETA (minutes)</label>
-                            <input
-                                type="number"
-                                id="dashboard-delivery-time"
-                                value={deliveryTime}
-                                onChange={(e) => setDeliveryTime(e.target.value)}
-                                min="0"
-                                className="dashboard-input"
-                                placeholder="e.g. 28"
-                            />
-                        </div>
+                    <div className="form-field">
+                        <label htmlFor="dashboard-driver">Driver</label>
+                        <select
+                            id="dashboard-driver"
+                            value={driver}
+                            onChange={handleDriverChange}
+                            className="dashboard-input"
+                            disabled={driversLoading}
+                        >
+                            <option value="">Select a driver</option>
+                            {availableDrivers.map((driverItem) => (
+                                <option key={driverItem.driverId} value={driverItem.fullName}>
+                                    {driverItem.fullName}
+                                </option>
+                            ))}
+                        </select>
+                        {driversLoading && <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.5rem' }}>Loading drivers...</p>}
+                        {!driversLoading && availableDrivers.length === 0 && (
+                            <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.5rem' }}>No available drivers</p>
+                        )}
                     </div>
                     <button
                         className="btn btn-primary btn-full"
-                        disabled={!driver || !deliveryTime}
+                        disabled={!driver}
                         onClick={handleAssignDriver}
                     >
                         Assign Driver
