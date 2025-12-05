@@ -13,6 +13,7 @@ const RetrieveOrderDashboardSection = () => {
     const [isQueueFadingOut, setIsQueueFadingOut] = useState(false);
     const [currentOrder, setCurrentOrder] = useState(null);
     const [orderItems, setOrderItems] = useState([]);
+    const [deliveryAddress, setDeliveryAddress] = useState(null);
     const [loading, setLoading] = useState(true);
     const timeoutRefs = useRef([]);
     
@@ -87,10 +88,29 @@ const RetrieveOrderDashboardSection = () => {
                 } else {
                     console.error('Failed to fetch order items:', itemsResponse.status);
                 }
+                
+                // Fetch delivery address using addressId from the order
+                if (mostRecentOrder.addressId) {
+                    console.log('Fetching delivery address with addressId:', mostRecentOrder.addressId);
+                    const addressResponse = await fetch(`${API_BASE_URL}/delivery-addresses/${mostRecentOrder.addressId}`);
+                    if (addressResponse.ok) {
+                        const address = await addressResponse.json();
+                        console.log('Fetched delivery address from database:', address);
+                        setDeliveryAddress(address);
+                    } else {
+                        const errorText = await addressResponse.text();
+                        console.error('Failed to fetch delivery address:', addressResponse.status, errorText);
+                        setDeliveryAddress(null);
+                    }
+                } else {
+                    console.warn('Order does not have an addressId');
+                    setDeliveryAddress(null);
+                }
             } else {
                 console.log('No pending orders found');
                 setCurrentOrder(null);
                 setOrderItems([]);
+                setDeliveryAddress(null);
             }
         } catch (error) {
             console.error('Error fetching pending order:', error);
@@ -209,26 +229,75 @@ const RetrieveOrderDashboardSection = () => {
                 <div className="dashboard-card customer-card">
                     <div className="dashboard-card-header">
                         <h3>Customer Information</h3>
-                        <p className="dashboard-meta muted">Delivery Window: 6:30 – 7:00 PM</p>
+                        {currentOrder && currentOrder.estimatedDeliveryTime ? (
+                            <p className="dashboard-meta muted">
+                                Delivery Window: {new Date(currentOrder.estimatedDeliveryTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                            </p>
+                        ) : (
+                            <p className="dashboard-meta muted">Delivery Window: TBD</p>
+                        )}
                     </div>
-                    <ul className="customer-details">
-                        <li>
-                            <span className="label">Name</span>
-                            <span className="value">John Doe</span>
-                        </li>
-                        <li>
-                            <span className="label">Phone</span>
-                            <span className="value">123-456-7890</span>
-                        </li>
-                        <li>
-                            <span className="label">Address</span>
-                            <span className="value">123 Main St, Anytown, USA</span>
-                        </li>
-                        <li>
-                            <span className="label">Instructions</span>
-                            <span className="value">Ring the bell once &amp; leave at doorstep.</span>
-                        </li>
-                    </ul>
+                    {currentOrder ? (
+                        <ul className="customer-details">
+                            <li>
+                                <span className="label">Name</span>
+                                <span className="value">{currentOrder.customerName || 'N/A'}</span>
+                            </li>
+                            <li>
+                                <span className="label">Phone</span>
+                                <span className="value">
+                                    {currentOrder.customerPhone ? (
+                                        currentOrder.customerPhone.length === 10 
+                                            ? `${currentOrder.customerPhone.slice(0, 3)}-${currentOrder.customerPhone.slice(3, 6)}-${currentOrder.customerPhone.slice(6)}`
+                                            : currentOrder.customerPhone
+                                    ) : 'N/A'}
+                                </span>
+                            </li>
+                            <li>
+                                <span className="label">Address</span>
+                                <span className="value">
+                                    {deliveryAddress ? (
+                                        (() => {
+                                            const parts = [];
+                                            if (deliveryAddress.buildingNumber) parts.push(deliveryAddress.buildingNumber);
+                                            if (deliveryAddress.street) parts.push(deliveryAddress.street);
+                                            if (deliveryAddress.aptUnit) parts.push(deliveryAddress.aptUnit);
+                                            const addressLine = parts.join(' ');
+                                            const cityStateZip = [deliveryAddress.city, deliveryAddress.state, deliveryAddress.zipCode].filter(Boolean).join(', ');
+                                            return addressLine && cityStateZip ? `${addressLine}, ${cityStateZip}` : addressLine || cityStateZip || 'N/A';
+                                        })()
+                                    ) : loading ? (
+                                        'Loading address...'
+                                    ) : (
+                                        'N/A'
+                                    )}
+                                </span>
+                            </li>
+                            <li>
+                                <span className="label">Instructions</span>
+                                <span className="value">{currentOrder.specialInstructions || 'No special instructions'}</span>
+                            </li>
+                        </ul>
+                    ) : (
+                        <ul className="customer-details">
+                            <li>
+                                <span className="label">Name</span>
+                                <span className="value">N/A</span>
+                            </li>
+                            <li>
+                                <span className="label">Phone</span>
+                                <span className="value">N/A</span>
+                            </li>
+                            <li>
+                                <span className="label">Address</span>
+                                <span className="value">N/A</span>
+                            </li>
+                            <li>
+                                <span className="label">Instructions</span>
+                                <span className="value">N/A</span>
+                            </li>
+                        </ul>
+                    )}
                 </div>
                 <div className="dashboard-card assign-card">
                     <div className="dashboard-card-header">
