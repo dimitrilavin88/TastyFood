@@ -70,14 +70,56 @@ public class OrderService {
         return orderDbInterface.findByDriverId(driverId);
     }
     
+    /**
+     * Calculate estimated delivery time based on order size
+     * Larger orders (more items/quantities) get longer ETAs
+     * @param orderItems List of order items with quantities
+     * @param createdAt When the order was created
+     * @return Estimated delivery time as Instant
+     */
+    private Instant calculateEstimatedDeliveryTime(List<OrderItem> orderItems, Instant createdAt) {
+        if (orderItems == null || orderItems.isEmpty()) {
+            return null;
+        }
+        
+        // Calculate total quantity of items
+        int totalQuantity = orderItems.stream()
+            .mapToInt(item -> item.getQuantity() != null ? item.getQuantity() : 0)
+            .sum();
+        
+        // Base preparation time: 22 minutes
+        int baseMinutes = 22;
+        
+        // Additional time per item: 2.5 minutes per item
+        double minutesPerItem = 2.5;
+        double additionalMinutes = totalQuantity * minutesPerItem;
+        
+        // For very large orders (10+ items), add extra buffer
+        int largeOrderBuffer = totalQuantity >= 10 ? 5 : 0;
+        
+        // Total estimated minutes
+        double totalMinutes = baseMinutes + additionalMinutes + largeOrderBuffer;
+        
+        // Round to nearest 5 minutes for cleaner display
+        long roundedMinutes = (long) Math.ceil(totalMinutes / 5.0) * 5;
+        
+        // Calculate ETA from order creation time
+        return createdAt.plusSeconds(roundedMinutes * 60);
+    }
+    
     @Transactional
     public Order createOrder(Order order, List<OrderItem> orderItems, DeliveryAddress deliveryAddress) {
-        order.setCreatedAt(Instant.now());
+        Instant createdAt = Instant.now();
+        order.setCreatedAt(createdAt);
         order.setLastUpdatedAt(Instant.now());
         // Always set status to PENDING for new orders
         order.setStatus(OrderStatus.PENDING);
         // Ensure delivered_at is null for new orders (will be set later when order is delivered)
         order.setDeliveredAt(null);
+        
+        // Calculate and set estimated delivery time based on order size
+        Instant estimatedDeliveryTime = calculateEstimatedDeliveryTime(orderItems, createdAt);
+        order.setEstimatedDeliveryTime(estimatedDeliveryTime);
         
         // Find or create delivery address
         if (deliveryAddress != null) {

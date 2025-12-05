@@ -147,6 +147,86 @@ const RetrieveOrderDashboardSection = () => {
         return timeout;
     };
 
+    /**
+     * Calculate ETA for orders that don't have one (fallback for old orders)
+     * Uses the same logic as the backend
+     * @param {Array} items - Array of order items with quantities
+     * @param {Date} orderCreatedAt - When the order was created
+     * @returns {Date} - Estimated delivery time
+     */
+    const calculateETAFallback = (items, orderCreatedAt) => {
+        if (!items || items.length === 0 || !orderCreatedAt) {
+            return null;
+        }
+
+        // Calculate total quantity of items
+        const totalQuantity = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+        
+        // Base preparation time: 22 minutes
+        const baseMinutes = 22;
+        
+        // Additional time per item: 2.5 minutes per item
+        const minutesPerItem = 2.5;
+        const additionalMinutes = totalQuantity * minutesPerItem;
+        
+        // For very large orders (10+ items), add extra buffer
+        const largeOrderBuffer = totalQuantity >= 10 ? 5 : 0;
+        
+        // Total estimated minutes
+        const totalMinutes = baseMinutes + additionalMinutes + largeOrderBuffer;
+        
+        // Round to nearest 5 minutes for cleaner display
+        const roundedMinutes = Math.ceil(totalMinutes / 5) * 5;
+        
+        // Calculate ETA from order creation time
+        const orderDate = new Date(orderCreatedAt);
+        const etaDate = new Date(orderDate.getTime() + roundedMinutes * 60 * 1000);
+        
+        return etaDate;
+    };
+
+    /**
+     * Format ETA for display (ETA is calculated by backend, with fallback for old orders)
+     * @param {string} estimatedDeliveryTime - Estimated delivery time from backend (ISO string)
+     * @param {Array} orderItems - Order items for fallback calculation
+     * @param {string} createdAt - Order creation time for fallback calculation
+     * @returns {string} - Formatted time string
+     */
+    const formatETA = (estimatedDeliveryTime, orderItems, createdAt) => {
+        // If no ETA from backend, calculate it as fallback (for old orders)
+        let etaDate = null;
+        if (estimatedDeliveryTime) {
+            try {
+                etaDate = new Date(estimatedDeliveryTime);
+            } catch (error) {
+                console.error('Error parsing estimatedDeliveryTime:', error);
+            }
+        }
+        
+        // Fallback calculation for orders without ETA
+        if (!etaDate && orderItems && createdAt) {
+            etaDate = calculateETAFallback(orderItems, createdAt);
+        }
+        
+        if (!etaDate) return 'TBD';
+        
+        try {
+            // Format as single time (e.g., "6:30 PM")
+            const formatTime = (date) => {
+                return date.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+            };
+            
+            return formatTime(etaDate);
+        } catch (error) {
+            console.error('Error formatting ETA:', error);
+            return 'TBD';
+        }
+    };
+
     const handleDriverChange = (e) => {
         const selectedDriver = e.target.value;
         setDriver(selectedDriver);
@@ -236,12 +316,12 @@ const RetrieveOrderDashboardSection = () => {
                 <div className="dashboard-card customer-card">
                     <div className="dashboard-card-header">
                         <h3>Customer Information</h3>
-                        {currentOrder && currentOrder.estimatedDeliveryTime ? (
+                        {currentOrder ? (
                             <p className="dashboard-meta muted">
-                                Delivery Window: {new Date(currentOrder.estimatedDeliveryTime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                ETA: {formatETA(currentOrder.estimatedDeliveryTime, orderItems, currentOrder.createdAt)}
                             </p>
                         ) : (
-                            <p className="dashboard-meta muted">Delivery Window: TBD</p>
+                            <p className="dashboard-meta muted">ETA: TBD</p>
                         )}
                     </div>
                     {currentOrder ? (
