@@ -63,7 +63,7 @@ public class OrderService {
     }
     
     public List<Order> getOrdersByStatus(OrderStatus status) {
-        return orderDbInterface.findByStatus(status);
+        return orderDbInterface.findByStatusOrderByCreatedAtDesc(status);
     }
     
     public List<Order> getOrdersByDriver(Integer driverId) {

@@ -1,5 +1,6 @@
 package com.tastyfood.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tastyfood.backend.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,10 +26,12 @@ public class Order {
     @Column(name = "customer_phone", nullable = false)
     private String customerPhone;
     
+    @JsonIgnore // Ignore during serialization to prevent lazy loading issues
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
     private Driver driver;
     
+    @JsonIgnore // Ignore during serialization to prevent lazy loading issues
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id")
     private DeliveryAddress deliveryAddress;

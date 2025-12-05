@@ -32,6 +32,11 @@ public class DBInterfaceOrdersImpl implements DBInterfaceOrders {
     }
     
     @Override
+    public List<Order> findByStatusOrderByCreatedAtDesc(OrderStatus status) {
+        return repository.findByStatusOrderByCreatedAtDesc(status);
+    }
+    
+    @Override
     public List<Order> findByDriverId(Integer driverId) {
         return repository.findByDriverId(driverId);
     }

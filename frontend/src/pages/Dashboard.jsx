@@ -11,7 +11,12 @@ const RetrieveOrderDashboardSection = () => {
     const [isFadingOut, setIsFadingOut] = useState(false);
     const [queueSuccessMessage, setQueueSuccessMessage] = useState('');
     const [isQueueFadingOut, setIsQueueFadingOut] = useState(false);
+    const [currentOrder, setCurrentOrder] = useState(null);
+    const [orderItems, setOrderItems] = useState([]);
+    const [loading, setLoading] = useState(true);
     const timeoutRefs = useRef([]);
+    
+    const API_BASE_URL = 'http://localhost:8080/api';
 
     const clearTimeouts = () => {
         timeoutRefs.current.forEach(timeout => clearTimeout(timeout));
@@ -21,6 +26,80 @@ const RetrieveOrderDashboardSection = () => {
     useEffect(() => {
         return () => clearTimeouts();
     }, []);
+
+    useEffect(() => {
+        fetchMostRecentPendingOrder();
+    }, []);
+
+    const fetchMostRecentPendingOrder = async () => {
+        try {
+            setLoading(true);
+            // Fetch all pending orders
+            const response = await fetch(`${API_BASE_URL}/orders/status/pending`);
+            console.log('Fetching pending orders from:', `${API_BASE_URL}/orders/status/pending`);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Failed to fetch orders:', response.status, errorText);
+                throw new Error(`Failed to fetch orders: ${response.status} ${errorText}`);
+            }
+            const orders = await response.json();
+            console.log('Fetched orders:', orders);
+            
+            // Sort orders by created_at descending to get the most recent first
+            const sortedOrders = orders.sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0);
+                const dateB = new Date(b.createdAt || 0);
+                return dateB - dateA; // Descending order (most recent first)
+            });
+            
+            console.log('Sorted orders:', sortedOrders);
+            
+            // Get the most recent pending order
+            if (sortedOrders && sortedOrders.length > 0) {
+                const mostRecentOrder = sortedOrders[0];
+                console.log('Most recent order:', mostRecentOrder);
+                setCurrentOrder(mostRecentOrder);
+                
+                // Fetch order items for this order
+                const itemsResponse = await fetch(`${API_BASE_URL}/orders/${mostRecentOrder.orderId}/items`);
+                console.log('Fetching items for order:', mostRecentOrder.orderId);
+                if (itemsResponse.ok) {
+                    const items = await itemsResponse.json();
+                    console.log('Fetched order items:', items);
+                    
+                    // Fetch menu items to get names
+                    const menuItemsResponse = await fetch(`${API_BASE_URL}/menu/items`);
+                    if (menuItemsResponse.ok) {
+                        const menuItems = await menuItemsResponse.json();
+                        const menuItemsMap = new Map(menuItems.map(item => [item.itemId, item]));
+                        
+                        // Map order items with menu item names
+                        const itemsWithNames = items.map(orderItem => ({
+                            ...orderItem,
+                            menuItem: menuItemsMap.get(orderItem.itemId) || null
+                        }));
+                        console.log('Order items with names:', itemsWithNames);
+                        setOrderItems(itemsWithNames);
+                    } else {
+                        setOrderItems(items);
+                    }
+                } else {
+                    console.error('Failed to fetch order items:', itemsResponse.status);
+                }
+            } else {
+                console.log('No pending orders found');
+                setCurrentOrder(null);
+                setOrderItems([]);
+            }
+        } catch (error) {
+            console.error('Error fetching pending order:', error);
+            setCurrentOrder(null);
+            setOrderItems([]);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const registerTimeout = (callback, delay) => {
         const timeout = setTimeout(callback, delay);
@@ -94,42 +173,38 @@ const RetrieveOrderDashboardSection = () => {
                 <div className="dashboard-card order-card">
                     <div className="dashboard-card-header">
                         <h3>Order Summary</h3>
-                        <p className="dashboard-meta">Order ID #1234567890</p>
+                        {loading ? (
+                            <p className="dashboard-meta">Loading...</p>
+                        ) : currentOrder ? (
+                            <p className="dashboard-meta">Order ID #{currentOrder.orderId}</p>
+                        ) : (
+                            <p className="dashboard-meta">No pending orders</p>
+                        )}
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Item</th>
-                                <th>Quantity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Chicken Wings</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>Grilled Salmon</td>
-                                <td>1</td>
-                            </tr>
-                            <tr>
-                                <td>Cheesecake</td>
-                                <td>1</td>
-                            </tr>
-                            <tr>
-                                <td>Soda</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td>Water</td>
-                                <td>1</td>
-                            </tr>
-                            <tr>
-                                <td>Coffee</td>
-                                <td>1</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    {loading ? (
+                        <div style={{ padding: '1rem', textAlign: 'center' }}>Loading order details...</div>
+                    ) : currentOrder && orderItems.length > 0 ? (
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {orderItems.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{item.menuItem?.name || `Item #${item.itemId}`}</td>
+                                        <td>{item.quantity}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : currentOrder ? (
+                        <div style={{ padding: '1rem', textAlign: 'center' }}>No items found for this order</div>
+                    ) : (
+                        <div style={{ padding: '1rem', textAlign: 'center' }}>No pending orders available</div>
+                    )}
                 </div>
                 <div className="dashboard-card customer-card">
                     <div className="dashboard-card-header">

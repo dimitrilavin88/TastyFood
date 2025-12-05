@@ -10,6 +10,7 @@ public interface DBInterfaceOrders {
     Optional<Order> findById(String orderId);
     List<Order> findAll();
     List<Order> findByStatus(OrderStatus status);
+    List<Order> findByStatusOrderByCreatedAtDesc(OrderStatus status);
     List<Order> findByDriverId(Integer driverId);
     List<Order> findAllByOrderByCreatedAtDesc();
     Order save(Order order);

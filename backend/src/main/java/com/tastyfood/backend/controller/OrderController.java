@@ -36,8 +36,27 @@ public class OrderController {
     }
     
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<Order>> getOrdersByStatus(@PathVariable OrderStatus status) {
-        return ResponseEntity.ok(orderService.getOrdersByStatus(status));
+    public ResponseEntity<List<Order>> getOrdersByStatus(@PathVariable String status) {
+        // Convert string status to enum (handle case-insensitive)
+        OrderStatus orderStatus;
+        try {
+            // Try to match the database format first (lowercase)
+            String normalized = status.trim().toLowerCase();
+            if (normalized.equals("pending")) {
+                orderStatus = OrderStatus.PENDING;
+            } else if (normalized.equals("in route")) {
+                orderStatus = OrderStatus.OUT_FOR_DELIVERY;
+            } else if (normalized.equals("delivered")) {
+                orderStatus = OrderStatus.DELIVERED;
+            } else {
+                // Try enum value directly (uppercase)
+                orderStatus = OrderStatus.valueOf(status.toUpperCase());
+            }
+        } catch (IllegalArgumentException e) {
+            // If status doesn't match any enum value, return bad request
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(orderService.getOrdersByStatus(orderStatus));
     }
     
     @GetMapping("/{id}/items")

@@ -1,5 +1,6 @@
 package com.tastyfood.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,10 +23,12 @@ public class OrderItem {
     @Column(name = "item_id", nullable = false)
     private Integer itemId;
     
+    @JsonIgnore // Ignore during serialization to prevent lazy loading issues
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", insertable = false, updatable = false)
     private Order order;
     
+    @JsonIgnore // Ignore during serialization to prevent lazy loading issues
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", insertable = false, updatable = false)
     private MenuItem menuItem;
