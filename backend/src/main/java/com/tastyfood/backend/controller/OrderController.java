@@ -59,6 +59,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByStatus(orderStatus));
     }
     
+    @GetMapping("/delivered/without-timestamp")
+    public ResponseEntity<List<Order>> getDeliveredOrdersWithoutTimestamp() {
+        return ResponseEntity.ok(orderService.getDeliveredOrdersWithoutTimestamp());
+    }
+    
     @GetMapping("/{id}/items")
     public ResponseEntity<List<OrderItem>> getOrderItems(@PathVariable String id) {
         return ResponseEntity.ok(orderService.getOrderItems(id));
@@ -144,6 +149,26 @@ public class OrderController {
             Order updatedOrder = orderService.saveOrderToQueue(id, driverFullName);
             return ResponseEntity.ok(updatedOrder);
         } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @PostMapping("/{id}/record-delivery")
+    public ResponseEntity<Order> recordDelivery(@PathVariable String id, @RequestBody Map<String, String> request) {
+        String timeOfOutcome = request.get("timeOfOutcome");
+        if (timeOfOutcome == null || timeOfOutcome.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        try {
+            // Parse the datetime-local string to Instant
+            // Format: "YYYY-MM-DDTHH:mm" (e.g., "2025-12-05T14:30")
+            java.time.LocalDateTime localDateTime = java.time.LocalDateTime.parse(timeOfOutcome);
+            java.time.Instant deliveredAt = localDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant();
+            
+            Order updatedOrder = orderService.recordDelivery(id, deliveredAt);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }

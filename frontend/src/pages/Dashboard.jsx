@@ -461,7 +461,11 @@ const RecordDeliveryDashboardSection = () => {
     const [isFadingOut, setIsFadingOut] = useState(false);
     const [orderId, setOrderId] = useState('');
     const [timeOfOutcome, setTimeOfOutcome] = useState('');
+    const [deliveredOrders, setDeliveredOrders] = useState([]);
+    const [ordersLoading, setOrdersLoading] = useState(true);
     const timeoutsRef = useRef([]);
+    
+    const API_BASE_URL = 'http://localhost:8080/api';
 
     const clearTimeouts = () => {
         timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
@@ -471,6 +475,32 @@ const RecordDeliveryDashboardSection = () => {
     useEffect(() => {
         return () => clearTimeouts();
     }, []);
+
+    useEffect(() => {
+        fetchDeliveredOrders();
+        // Refresh the list every 30 seconds to get newly delivered orders
+        const interval = setInterval(fetchDeliveredOrders, 30000);
+        return () => clearInterval(interval);
+    }, []);
+
+    const fetchDeliveredOrders = async () => {
+        try {
+            setOrdersLoading(true);
+            // Fetch only delivered orders that don't have a delivery timestamp yet
+            const response = await fetch(`${API_BASE_URL}/orders/delivered/without-timestamp`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch delivered orders');
+            }
+            const orders = await response.json();
+            console.log('Fetched delivered orders without timestamp:', orders);
+            setDeliveredOrders(orders);
+        } catch (error) {
+            console.error('Error fetching delivered orders:', error);
+            setDeliveredOrders([]);
+        } finally {
+            setOrdersLoading(false);
+        }
+    };
 
     const registerTimeout = (callback, delay) => {
         const timeout = setTimeout(callback, delay);
@@ -482,19 +512,70 @@ const RecordDeliveryDashboardSection = () => {
         return !orderId || !timeOfOutcome;
     };
 
-    const handleRecordDelivery = () => {
-        clearTimeouts();
-        setSuccessMessage('Delivery recorded successfully! 📝');
-        setIsFadingOut(false);
-
-        registerTimeout(() => {
-            setIsFadingOut(true);
-        }, 3500);
-
-        registerTimeout(() => {
-            setSuccessMessage('');
+    const handleRecordDelivery = async () => {
+        if (!orderId || !timeOfOutcome) {
+            setSuccessMessage('Please select an order and enter the time of outcome');
             setIsFadingOut(false);
-        }, 4000);
+            registerTimeout(() => {
+                setIsFadingOut(true);
+            }, 3000);
+            registerTimeout(() => {
+                setSuccessMessage('');
+                setIsFadingOut(false);
+            }, 3500);
+            return;
+        }
+        
+        try {
+            clearTimeouts();
+            setSuccessMessage('Recording delivery...');
+            setIsFadingOut(false);
+            
+            const response = await fetch(`${API_BASE_URL}/orders/${orderId}/record-delivery`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    timeOfOutcome: timeOfOutcome
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to record delivery');
+            }
+            
+            // Refresh the delivered orders list to remove the one we just recorded
+            await fetchDeliveredOrders();
+            
+            // Clear the form
+            setOrderId('');
+            setTimeOfOutcome('');
+            
+            setSuccessMessage('Delivery recorded successfully! 📝');
+            
+            registerTimeout(() => {
+                setIsFadingOut(true);
+            }, 3500);
+
+            registerTimeout(() => {
+                setSuccessMessage('');
+                setIsFadingOut(false);
+            }, 4000);
+        } catch (error) {
+            console.error('Error recording delivery:', error);
+            setSuccessMessage('Failed to record delivery. Please try again.');
+            setIsFadingOut(false);
+            
+            registerTimeout(() => {
+                setIsFadingOut(true);
+            }, 3500);
+
+            registerTimeout(() => {
+                setSuccessMessage('');
+                setIsFadingOut(false);
+            }, 4000);
+        }
     };
 
     return (
@@ -524,10 +605,19 @@ const RecordDeliveryDashboardSection = () => {
                                 value={orderId}
                                 onChange={(e) => setOrderId(e.target.value)}
                                 className="dashboard-input"
+                                disabled={ordersLoading}
                             >
                                 <option value="">Select an order</option>
-                                <option value="1234567890">1234567890</option>
+                                {deliveredOrders.map((order) => (
+                                    <option key={order.orderId} value={order.orderId}>
+                                        {order.orderId}
+                                    </option>
+                                ))}
                             </select>
+                            {ordersLoading && <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.5rem' }}>Loading orders...</p>}
+                            {!ordersLoading && deliveredOrders.length === 0 && (
+                                <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.5rem' }}>No delivered orders available</p>
+                            )}
                         </div>
                         <div className="form-field">
                             <label htmlFor="dashboard-time-of-outcome">Time of Outcome</label>

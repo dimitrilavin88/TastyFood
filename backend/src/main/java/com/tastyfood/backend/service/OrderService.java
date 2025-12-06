@@ -75,6 +75,14 @@ public class OrderService {
         return orderDbInterface.findByStatusOrderByCreatedAtDesc(status);
     }
     
+    /**
+     * Get delivered orders that haven't had their delivery timestamp recorded yet
+     * @return List of delivered orders with delivered_at = NULL
+     */
+    public List<Order> getDeliveredOrdersWithoutTimestamp() {
+        return orderDbInterface.findByStatusAndDeliveredAtIsNullOrderByCreatedAtDesc(OrderStatus.DELIVERED);
+    }
+    
     public List<Order> getOrdersByDriver(Integer driverId) {
         return orderDbInterface.findByDriverId(driverId);
     }
@@ -252,6 +260,43 @@ public class OrderService {
     
     public List<OrderItem> getOrderItems(String orderId) {
         return orderItemDbInterface.findByOrderId(orderId);
+    }
+    
+    /**
+     * Record delivery: set delivered_at timestamp for an order
+     * @param orderId The order ID
+     * @param deliveredAt The timestamp when delivery was completed
+     * @return Updated order
+     */
+    @Transactional
+    public Order recordDelivery(String orderId, Instant deliveredAt) {
+        Optional<Order> orderOpt = orderDbInterface.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            throw new IllegalArgumentException("Order not found: " + orderId);
+        }
+        
+        Order order = orderOpt.get();
+        
+        // Set delivered_at timestamp
+        order.setDeliveredAt(deliveredAt);
+        order.setLastUpdatedAt(Instant.now());
+        
+        // Update the order in the database
+        Order savedOrder = orderDbInterface.save(order);
+        
+        // Explicitly update delivered_at using native query to ensure it's saved
+        long deliveredAtMs = deliveredAt.toEpochMilli();
+        long lastUpdatedMs = Instant.now().toEpochMilli();
+        entityManager.createNativeQuery("UPDATE orders SET delivered_at = ?, last_updated_at = ? WHERE order_id = ?")
+            .setParameter(1, deliveredAtMs)
+            .setParameter(2, lastUpdatedMs)
+            .setParameter(3, orderId)
+            .executeUpdate();
+        
+        // Refresh the order entity
+        entityManager.refresh(savedOrder);
+        
+        return savedOrder;
     }
     
     @Transactional

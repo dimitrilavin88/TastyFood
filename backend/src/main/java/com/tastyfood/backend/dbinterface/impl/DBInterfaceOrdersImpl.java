@@ -47,6 +47,11 @@ public class DBInterfaceOrdersImpl implements DBInterfaceOrders {
     }
     
     @Override
+    public List<Order> findByStatusAndDeliveredAtIsNullOrderByCreatedAtDesc(OrderStatus status) {
+        return repository.findByStatusAndDeliveredAtIsNullOrderByCreatedAtDesc(status);
+    }
+    
+    @Override
     public Order save(Order order) {
         return repository.save(order);
     }

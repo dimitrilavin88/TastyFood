@@ -13,6 +13,7 @@ public interface DBInterfaceOrders {
     List<Order> findByStatusOrderByCreatedAtDesc(OrderStatus status);
     List<Order> findByDriverId(Integer driverId);
     List<Order> findAllByOrderByCreatedAtDesc();
+    List<Order> findByStatusAndDeliveredAtIsNullOrderByCreatedAtDesc(OrderStatus status);
     Order save(Order order);
     void deleteById(String orderId);
     boolean existsById(String orderId);

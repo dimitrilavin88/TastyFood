@@ -55,21 +55,19 @@ public class OrderDeliveryScheduler {
                     long minutesElapsed = (now.toEpochMilli() - lastUpdated.toEpochMilli()) / 60000;
                     
                     if (minutesElapsed >= 1) {
-                        // Mark order as delivered
+                        // Mark order as delivered (but don't set delivered_at - that's done manually)
                         order.setStatus(OrderStatus.DELIVERED);
-                        order.setDeliveredAt(now);
                         order.setLastUpdatedAt(now);
                         
                         // Update the order in the database
                         orderService.updateOrder(order);
                         
-                        // Explicitly update delivered_at using native query to ensure it's saved
-                        long deliveredAtMs = now.toEpochMilli();
-                        entityManager.createNativeQuery("UPDATE orders SET status = ?, delivered_at = ?, last_updated_at = ? WHERE order_id = ?")
+                        // Explicitly update status using native query to ensure it's saved
+                        long lastUpdatedMs = now.toEpochMilli();
+                        entityManager.createNativeQuery("UPDATE orders SET status = ?, last_updated_at = ? WHERE order_id = ?")
                             .setParameter(1, "delivered")
-                            .setParameter(2, deliveredAtMs)
-                            .setParameter(3, deliveredAtMs)
-                            .setParameter(4, order.getOrderId())
+                            .setParameter(2, lastUpdatedMs)
+                            .setParameter(3, order.getOrderId())
                             .executeUpdate();
                         
                         // Update driver's on_delivery status to false
@@ -85,7 +83,7 @@ public class OrderDeliveryScheduler {
                         }
                         
                         updatedCount++;
-                        logger.info("Automatically marked order {} as delivered (was in route for {} minutes)", 
+                        logger.info("Automatically marked order {} as delivered (was in route for {} minutes). delivered_at will be set manually.", 
                             order.getOrderId(), minutesElapsed);
                     }
                 }
