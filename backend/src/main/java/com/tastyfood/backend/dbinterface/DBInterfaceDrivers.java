@@ -12,6 +12,7 @@ public interface DBInterfaceDrivers {
     // findByStatus removed - status column doesn't exist in database
     List<Driver> findByOnDelivery(Boolean onDelivery);
     Optional<Driver> findByCurrentOrderId(Integer orderId);
+    Optional<Driver> findByFullName(String fullName);
     Driver save(Driver driver);
     void deleteById(Integer driverId);
     boolean existsById(Integer driverId);

@@ -12,4 +12,5 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
     // findByStatus removed - status column doesn't exist in database
     List<Driver> findByOnDelivery(Boolean onDelivery);
     Optional<Driver> findByCurrentOrderId(Integer orderId);
+    Optional<Driver> findByFullName(String fullName);
 }

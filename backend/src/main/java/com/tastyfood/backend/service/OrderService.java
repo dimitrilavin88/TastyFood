@@ -3,9 +3,12 @@ package com.tastyfood.backend.service;
 import com.tastyfood.backend.dbinterface.DBInterfaceOrders;
 import com.tastyfood.backend.dbinterface.DBInterfaceOrderItems;
 import com.tastyfood.backend.domain.DeliveryAddress;
+import com.tastyfood.backend.domain.Driver;
 import com.tastyfood.backend.domain.Order;
 import com.tastyfood.backend.domain.OrderItem;
 import com.tastyfood.backend.enums.OrderStatus;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,12 @@ public class OrderService {
     
     @Autowired
     private DeliveryAddressService deliveryAddressService;
+    
+    @Autowired
+    private DriverService driverService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
     
     /**
      * Generates a unique order ID in the format FD####
@@ -174,6 +183,71 @@ public class OrderService {
     public Order updateOrder(Order order) {
         order.setLastUpdatedAt(Instant.now());
         return orderDbInterface.save(order);
+    }
+    
+    /**
+     * Save order to queue: update status to OUT_FOR_DELIVERY, assign driver, and set estimated delivery time if needed
+     * @param orderId The order ID
+     * @param driverFullName The full name of the driver to assign
+     * @return Updated order
+     */
+    @Transactional
+    public Order saveOrderToQueue(String orderId, String driverFullName) {
+        Optional<Order> orderOpt = orderDbInterface.findById(orderId);
+        if (orderOpt.isEmpty()) {
+            throw new IllegalArgumentException("Order not found: " + orderId);
+        }
+        
+        Order order = orderOpt.get();
+        
+        // Update status to OUT_FOR_DELIVERY ("in route")
+        order.setStatus(OrderStatus.OUT_FOR_DELIVERY);
+        
+        // Find and assign driver
+        Optional<Driver> driverOpt = driverService.getDriverByFullName(driverFullName);
+        if (driverOpt.isEmpty()) {
+            throw new IllegalArgumentException("Driver not found: " + driverFullName);
+        }
+        
+        Driver driver = driverOpt.get();
+        // Set the driver relationship (this will update driver_id in the database)
+        order.setDriver(driver);
+        
+        // Get order items to calculate ETA
+        List<OrderItem> orderItems = orderItemDbInterface.findByOrderId(orderId);
+        Instant estimatedDeliveryTime = calculateEstimatedDeliveryTime(orderItems, order.getCreatedAt());
+        order.setEstimatedDeliveryTime(estimatedDeliveryTime);
+        
+        // Update driver's on_delivery status to true
+        driver.setOnDelivery(true);
+        driverService.updateDriver(driver);
+        
+        order.setLastUpdatedAt(Instant.now());
+        
+        // Save the order first to update status and other fields
+        Order savedOrder = orderDbInterface.save(order);
+        
+        // Explicitly update driver_id and estimated_delivery_time using native query
+        // Convert Instant to milliseconds (SQLite stores timestamps as milliseconds since epoch)
+        if (estimatedDeliveryTime != null) {
+            long estimatedDeliveryTimeMs = estimatedDeliveryTime.toEpochMilli();
+            entityManager.createNativeQuery("UPDATE orders SET driver_id = ?, estimated_delivery_time = ? WHERE order_id = ?")
+                .setParameter(1, driver.getDriverId())
+                .setParameter(2, estimatedDeliveryTimeMs)
+                .setParameter(3, orderId)
+                .executeUpdate();
+        } else {
+            // If no ETA, just update driver_id
+            entityManager.createNativeQuery("UPDATE orders SET driver_id = ? WHERE order_id = ?")
+                .setParameter(1, driver.getDriverId())
+                .setParameter(2, orderId)
+                .executeUpdate();
+        }
+        
+        // Refresh the order entity to get the updated fields
+        entityManager.refresh(savedOrder);
+        
+        return savedOrder;
     }
     
     public List<OrderItem> getOrderItems(String orderId) {

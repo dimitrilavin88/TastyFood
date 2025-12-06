@@ -232,34 +232,69 @@ const RetrieveOrderDashboardSection = () => {
         setDriver(selectedDriver);
     };
 
-    const handleAssignDriver = () => {
-        clearTimeouts();
-        setSuccessMessage('Driver assigned successfully! 🚚');
-        setIsFadingOut(false);
-
-        registerTimeout(() => {
-            setIsFadingOut(true);
-        }, 3500);
-
-        registerTimeout(() => {
-            setSuccessMessage('');
-            setIsFadingOut(false);
-        }, 4000);
-    };
-
-    const saveToQueue = () => {
-        clearTimeouts();
-        setQueueSuccessMessage('Order saved to queue successfully! 📋');
-        setIsQueueFadingOut(false);
-
-        registerTimeout(() => {
-            setIsQueueFadingOut(true);
-        }, 3500);
-
-        registerTimeout(() => {
-            setQueueSuccessMessage('');
+    const saveToQueue = async () => {
+        if (!currentOrder) {
+            setQueueSuccessMessage('No order selected');
             setIsQueueFadingOut(false);
-        }, 4000);
+            return;
+        }
+        
+        if (!driver) {
+            setQueueSuccessMessage('Please select a driver first');
+            setIsQueueFadingOut(false);
+            return;
+        }
+        
+        try {
+            clearTimeouts();
+            setQueueSuccessMessage('Saving order to queue...');
+            setIsQueueFadingOut(false);
+            
+            const response = await fetch(`${API_BASE_URL}/orders/${currentOrder.orderId}/save-to-queue`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    driverFullName: driver
+                })
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Failed to save order to queue: ${response.status} ${errorText}`);
+            }
+            
+            const updatedOrder = await response.json();
+            setCurrentOrder(updatedOrder);
+            
+            // Refresh available drivers (the assigned driver should no longer be available)
+            fetchAvailableDrivers();
+            
+            setQueueSuccessMessage('Order saved to queue successfully! 📋');
+            
+            registerTimeout(() => {
+                setIsQueueFadingOut(true);
+            }, 3500);
+
+            registerTimeout(() => {
+                setQueueSuccessMessage('');
+                setIsQueueFadingOut(false);
+            }, 4000);
+        } catch (error) {
+            console.error('Error saving order to queue:', error);
+            setQueueSuccessMessage('Failed to save order to queue. Please try again.');
+            setIsQueueFadingOut(false);
+            
+            registerTimeout(() => {
+                setIsQueueFadingOut(true);
+            }, 3500);
+
+            registerTimeout(() => {
+                setQueueSuccessMessage('');
+                setIsQueueFadingOut(false);
+            }, 4000);
+        }
     };
 
     return (
@@ -412,13 +447,6 @@ const RetrieveOrderDashboardSection = () => {
                             <p style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.5rem' }}>No available drivers</p>
                         )}
                     </div>
-                    <button
-                        className="btn btn-primary btn-full"
-                        disabled={!driver}
-                        onClick={handleAssignDriver}
-                    >
-                        Assign Driver
-                    </button>
                 </div>
             </div>
             <div className="dashboard-section-actions">

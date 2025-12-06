@@ -36,6 +36,10 @@ public class DriverService {
         return dbInterface.findByCurrentOrderId(orderId);
     }
     
+    public Optional<Driver> getDriverByFullName(String fullName) {
+        return dbInterface.findByFullName(fullName);
+    }
+    
     public Driver createDriver(Driver driver) {
         // Status column doesn't exist in database, so we don't set it
         if (driver.getOnDelivery() == null) {

@@ -44,6 +44,11 @@ public class DBInterfaceDriversImpl implements DBInterfaceDrivers {
     }
     
     @Override
+    public Optional<Driver> findByFullName(String fullName) {
+        return repository.findByFullName(fullName);
+    }
+    
+    @Override
     @Transactional
     public Driver save(Driver driver) {
         if (driver.getDriverId() == null) {

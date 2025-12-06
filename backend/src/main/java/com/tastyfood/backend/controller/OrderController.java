@@ -133,6 +133,21 @@ public class OrderController {
         return ResponseEntity.ok(orderService.updateOrder(order));
     }
     
+    @PostMapping("/{id}/save-to-queue")
+    public ResponseEntity<Order> saveOrderToQueue(@PathVariable String id, @RequestBody Map<String, String> request) {
+        String driverFullName = request.get("driverFullName");
+        if (driverFullName == null || driverFullName.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        try {
+            Order updatedOrder = orderService.saveOrderToQueue(id, driverFullName);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteOrder(@PathVariable String id) {
         Map<String, String> response = new HashMap<>();
