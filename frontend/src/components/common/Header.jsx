@@ -30,8 +30,11 @@ const Header = () => {
 
   const handleLogout = () => {
     setIsMenuOpen(false);
+    // Clear user state first
     logout();
-    navigate('/');
+    // Use window.location to force a hard navigation to home page
+    // This bypasses React Router and ProtectedRoutes redirect logic
+    window.location.href = '/';
   }
 
   const toggleMenu = () => {
