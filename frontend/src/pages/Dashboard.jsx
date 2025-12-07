@@ -30,7 +30,7 @@ const RetrieveOrderDashboardSection = () => {
     }, []);
 
     useEffect(() => {
-        fetchMostRecentPendingOrder();
+        fetchOldestPendingOrder();
         fetchAvailableDrivers();
     }, []);
     
@@ -52,7 +52,7 @@ const RetrieveOrderDashboardSection = () => {
         }
     };
 
-    const fetchMostRecentPendingOrder = async () => {
+    const fetchOldestPendingOrder = async () => {
         try {
             setLoading(true);
             // Fetch all pending orders
@@ -67,24 +67,24 @@ const RetrieveOrderDashboardSection = () => {
             const orders = await response.json();
             console.log('Fetched orders:', orders);
             
-            // Sort orders by created_at descending to get the most recent first
+            // Sort orders by created_at ascending to get the oldest first
             const sortedOrders = orders.sort((a, b) => {
                 const dateA = new Date(a.createdAt || 0);
                 const dateB = new Date(b.createdAt || 0);
-                return dateB - dateA; // Descending order (most recent first)
+                return dateA - dateB; // Ascending order (oldest first)
             });
             
-            console.log('Sorted orders:', sortedOrders);
+            console.log('Sorted orders (oldest first):', sortedOrders);
             
-            // Get the most recent pending order
+            // Get the oldest pending order
             if (sortedOrders && sortedOrders.length > 0) {
-                const mostRecentOrder = sortedOrders[0];
-                console.log('Most recent order:', mostRecentOrder);
-                setCurrentOrder(mostRecentOrder);
+                const oldestOrder = sortedOrders[0];
+                console.log('Oldest pending order:', oldestOrder);
+                setCurrentOrder(oldestOrder);
                 
                 // Fetch order items for this order
-                const itemsResponse = await fetch(`${API_BASE_URL}/orders/${mostRecentOrder.orderId}/items`);
-                console.log('Fetching items for order:', mostRecentOrder.orderId);
+                const itemsResponse = await fetch(`${API_BASE_URL}/orders/${oldestOrder.orderId}/items`);
+                console.log('Fetching items for order:', oldestOrder.orderId);
                 if (itemsResponse.ok) {
                     const items = await itemsResponse.json();
                     console.log('Fetched order items:', items);
@@ -110,9 +110,9 @@ const RetrieveOrderDashboardSection = () => {
                 }
                 
                 // Fetch delivery address using addressId from the order
-                if (mostRecentOrder.addressId) {
-                    console.log('Fetching delivery address with addressId:', mostRecentOrder.addressId);
-                    const addressResponse = await fetch(`${API_BASE_URL}/delivery-addresses/${mostRecentOrder.addressId}`);
+                if (oldestOrder.addressId) {
+                    console.log('Fetching delivery address with addressId:', oldestOrder.addressId);
+                    const addressResponse = await fetch(`${API_BASE_URL}/delivery-addresses/${oldestOrder.addressId}`);
                     if (addressResponse.ok) {
                         const address = await addressResponse.json();
                         console.log('Fetched delivery address from database:', address);
@@ -266,7 +266,6 @@ const RetrieveOrderDashboardSection = () => {
             }
             
             const updatedOrder = await response.json();
-            setCurrentOrder(updatedOrder);
             
             // Refresh available drivers (the assigned driver should no longer be available)
             fetchAvailableDrivers();
@@ -280,6 +279,8 @@ const RetrieveOrderDashboardSection = () => {
             registerTimeout(() => {
                 setQueueSuccessMessage('');
                 setIsQueueFadingOut(false);
+                // Refresh to get the next oldest pending order (current order is now IN_ROUTE)
+                fetchOldestPendingOrder();
             }, 4000);
         } catch (error) {
             console.error('Error saving order to queue:', error);
