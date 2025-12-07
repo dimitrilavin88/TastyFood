@@ -28,6 +28,14 @@ public class DBInterfaceDeliveryAddressImpl implements DBInterfaceDeliveryAddres
     }
     
     @Override
+    public Optional<DeliveryAddress> findMatchingAddress(
+            Integer buildingNumber, String street, String aptUnit, String city, String state, String zipCode) {
+        // Normalize aptUnit: if empty string, treat as null
+        String normalizedAptUnit = (aptUnit != null && aptUnit.trim().isEmpty()) ? null : aptUnit;
+        return repository.findMatchingAddress(buildingNumber, street, normalizedAptUnit, city, state, zipCode);
+    }
+    
+    @Override
     public List<DeliveryAddress> findAll() {
         return repository.findAll();
     }

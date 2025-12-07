@@ -23,6 +23,7 @@ const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems
     const [errors, setErrors] = useState({});
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedCardType, setSelectedCardType] = useState('');
+    const [paymentError, setPaymentError] = useState('');
 
     const handleCardTypeSelect = (cardType) => {
         setSelectedCardType(cardType);
@@ -179,6 +180,7 @@ const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems
             zipCode: ''
         });
         setErrors({});
+        setPaymentError('');
         onClose();
     };
 
@@ -391,18 +393,67 @@ const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems
                             </div>
                         </div>
 
+                        {paymentError && (
+                            <div className="payment-error-message" style={{
+                                padding: '1rem',
+                                marginBottom: '1rem',
+                                backgroundColor: '#fee',
+                                border: '1px solid #fcc',
+                                borderRadius: '4px',
+                                color: '#c33'
+                            }}>
+                                <strong>Payment Failed:</strong> {paymentError}
+                            </div>
+                        )}
                         <div className="form-actions">
                             <button type="button" className="btn btn-secondary" onClick={handleClose}>
                                 Cancel
                             </button>
-                            <button type="button" className="btn btn-primary" disabled={isProcessing} onClick={() => {
-                                if (validateForm()) {
-                                    setIsProcessing(true);
-                                    setTimeout(() => {
-                                        setIsProcessing(false);
+                            <button type="button" className="btn btn-primary" disabled={isProcessing} onClick={async () => {
+                                if (!validateForm()) {
+                                    return;
+                                }
+                                
+                                setIsProcessing(true);
+                                setPaymentError('');
+                                
+                                try {
+                                    const API_BASE_URL = 'http://localhost:8080/api';
+                                    
+                                    // Prepare payment data
+                                    const cardNumberDigits = formData.cardNumber.replace(/\s/g, '');
+                                    
+                                    const paymentData = {
+                                        cardNumber: cardNumberDigits,
+                                        expiryDate: formData.expiryDate,
+                                        cvv: formData.cvv,
+                                        orderTotal: orderTotal
+                                    };
+                                    
+                                    // Call backend payment processing endpoint
+                                    const response = await fetch(`${API_BASE_URL}/payments/process`, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify(paymentData)
+                                    });
+                                    
+                                    const result = await response.json();
+                                    
+                                    if (result.approved) {
+                                        // Payment approved - proceed to delivery info
                                         navigate('/delivery-info', { state: { cartItems, orderTotal, tipAmount, subtotal } });
                                         onClose();
-                                    }, 1000);
+                                    } else {
+                                        // Payment denied - show error message
+                                        setPaymentError(result.message || 'Payment was declined. Please try again.');
+                                        setIsProcessing(false);
+                                    }
+                                } catch (error) {
+                                    console.error('Error processing payment:', error);
+                                    setPaymentError('An error occurred while processing your payment. Please try again.');
+                                    setIsProcessing(false);
                                 }
                             }}>
                                 {isProcessing ? 'Processing...' : `Pay $${orderTotal.toFixed(2)}`}

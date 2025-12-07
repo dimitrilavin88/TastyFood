@@ -24,24 +24,35 @@ public class DeliveryAddressService {
     
     /**
      * Finds an existing address or creates a new one if it doesn't exist
+     * Matches on building number, street, aptUnit (if provided), city, state, and zip code
+     * Uses case-insensitive matching for string fields
      * @param address The address to find or create
      * @return The existing or newly created address
      */
     public DeliveryAddress findOrCreateAddress(DeliveryAddress address) {
-        // Check if address already exists (matching building number, street, city, state, zip code)
-        Optional<DeliveryAddress> existingAddress = dbInterface.findByBuildingNumberAndStreetAndCityAndStateAndZipCode(
+        // Normalize aptUnit: if empty string, treat as null
+        String aptUnit = (address.getAptUnit() != null && address.getAptUnit().trim().isEmpty()) 
+            ? null 
+            : address.getAptUnit();
+        
+        // Check if address already exists (matching all fields including aptUnit)
+        Optional<DeliveryAddress> existingAddress = dbInterface.findMatchingAddress(
             address.getBuildingNumber(),
             address.getStreet(),
+            aptUnit,
             address.getCity(),
             address.getState(),
             address.getZipCode()
         );
         
         if (existingAddress.isPresent()) {
+            // Address already exists, return the existing one
             return existingAddress.get();
         }
         
         // Address doesn't exist, create a new one
+        // Ensure aptUnit is normalized before saving
+        address.setAptUnit(aptUnit);
         return dbInterface.save(address);
     }
     

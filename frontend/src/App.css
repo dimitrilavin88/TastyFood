@@ -978,6 +978,7 @@ html {
   
   .items {
     height: calc(100vh - 180px); /* Adjust height for tablet */
+    padding: 2rem 0 4rem 0; /* Increased bottom padding for tablet */
   }
 }
 
@@ -994,6 +995,7 @@ html {
   
   .items {
     height: calc(100vh - 160px); /* Adjust height for mobile */
+    padding: 2rem 0 4rem 0; /* Increased bottom padding for mobile */
   }
   
   .menu-items h2 {
@@ -1008,10 +1010,11 @@ html {
 
 /* Item Cards Styles */
 .items {
-  padding: 2rem 0;
+  padding: 2rem 0 4rem 0; /* Increased bottom padding to ensure last items are fully visible */
   height: calc(100vh - 200px); /* Adjust height to fit within main container */
   overflow-y: auto; /* Make items scrollable */
   overflow-x: hidden; /* Prevent horizontal scroll */
+  box-sizing: border-box; /* Ensure padding is included in height calculation */
 }
 
 /* Custom scrollbar for items container */
@@ -1037,7 +1040,7 @@ html {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  padding: 1rem;
+  padding: 1rem 1rem 3rem 1rem; /* Increased bottom padding to ensure last items are fully visible */
 }
 
 .item-card {
