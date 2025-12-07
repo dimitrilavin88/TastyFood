@@ -23,7 +23,7 @@ const Footer = () => {
               <h4>Contact Info</h4>
               <p>📧 tastyfood@gmail.com</p>
               <p>📞 (555) 123-4567</p>
-              <p>📍 123 Food Street, City, State 12345</p>
+              <p>📍 178 Kneeland St, Boston, MA 02111</p>
               <div className="social-links">
                 <a href="#" aria-label="Facebook">
                   <img src={facebookIcon} alt="Facebook" className="social-icon" />
