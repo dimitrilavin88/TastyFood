@@ -43,7 +43,7 @@ services:
     startCommand: serve -s frontend/dist -l $PORT
     envVars:
       - key: NODE_VERSION
-        value: 18
+        value: 20
       - key: VITE_API_URL
         value: https://tastyfood-backend.onrender.com/api
         # Note: Update this with your actual backend URL after deployment

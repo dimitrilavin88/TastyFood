@@ -1,4 +1,4 @@
-import Header from '../components/common/header';
+import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
 import MenuItems from '../components/customer/MenuItems';
 import Items from '../components/customer/ItemCards';
