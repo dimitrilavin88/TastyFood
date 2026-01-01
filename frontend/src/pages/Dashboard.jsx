@@ -3,6 +3,7 @@ import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../utils/auth.jsx';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api.js';
 
 const RetrieveOrderDashboardSection = () => {
     const [driver, setDriver] = useState('');
@@ -17,8 +18,6 @@ const RetrieveOrderDashboardSection = () => {
     const [loading, setLoading] = useState(true);
     const [driversLoading, setDriversLoading] = useState(true);
     const timeoutRefs = useRef([]);
-    
-    const API_BASE_URL = 'http://localhost:8080/api';
 
     const clearTimeouts = () => {
         timeoutRefs.current.forEach(timeout => clearTimeout(timeout));
@@ -465,8 +464,6 @@ const RecordDeliveryDashboardSection = () => {
     const [deliveredOrders, setDeliveredOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(true);
     const timeoutsRef = useRef([]);
-    
-    const API_BASE_URL = 'http://localhost:8080/api';
 
     const clearTimeouts = () => {
         timeoutsRef.current.forEach(timeout => clearTimeout(timeout));

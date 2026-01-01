@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { validateUsername, validatePassword, useAuth } from '../utils/auth.jsx';
-
-const API_BASE_URL = 'http://localhost:8080/api';
+import { API_BASE_URL } from '../config/api.js';
 
 const Login = () => {
     const [username, setUsername] = useState('');

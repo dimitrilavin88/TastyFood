@@ -1,0 +1,57 @@
+services:
+  # Backend Service (Spring Boot)
+  - type: web
+    name: tastyfood-backend
+    env: java
+    region: oregon
+    plan: free
+    buildCommand: cd backend && mvn clean package -DskipTests
+    startCommand: cd backend && java -jar target/backend-1.0.0.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SERVER_PORT
+        value: 8080
+      - key: JAVA_VERSION
+        value: 17
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: tastyfood-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: tastyfood-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: tastyfood-db
+          property: password
+      - key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+        value: org.postgresql.Driver
+      - key: SPRING_JPA_DATABASE_PLATFORM
+        value: org.hibernate.dialect.PostgreSQLDialect
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+
+  # Frontend Service (React)
+  - type: web
+    name: tastyfood-frontend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build && npm install -g serve
+    startCommand: serve -s frontend/dist -l $PORT
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: VITE_API_URL
+        value: https://tastyfood-backend.onrender.com/api
+        # Note: Update this with your actual backend URL after deployment
+
+  # PostgreSQL Database
+  - type: pg
+    name: tastyfood-db
+    plan: free
+    region: oregon
+    databaseName: tastyfood
+    user: tastyfood_user

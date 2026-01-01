@@ -3,8 +3,7 @@ import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../utils/auth.jsx';
 import generatePassword from '../utils/GeneratePassword.jsx';
-
-const API_BASE_URL = 'http://localhost:8080/api';
+import { API_BASE_URL } from '../config/api.js';
 
 const ManageStaff = () => {
     const {user} = useAuth();

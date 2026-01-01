@@ -4,6 +4,7 @@ import visaImage from '../../assets/visa.jpg';
 import mastercardImage from '../../assets/mastercard.png';
 import amexImage from '../../assets/amex.png';
 import discoverImage from '../../assets/discover.png';
+import { API_BASE_URL } from '../../config/api.js';
 
 const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems, tipAmount = 0, subtotal = 0 }) => {
     const navigate = useNavigate();
@@ -418,8 +419,6 @@ const PaymentPopup = ({ isOpen, onClose, onPaymentSuccess, orderTotal, cartItems
                                 setPaymentError('');
                                 
                                 try {
-                                    const API_BASE_URL = 'http://localhost:8080/api';
-                                    
                                     // Prepare payment data
                                     const cardNumberDigits = formData.cardNumber.replace(/\s/g, '');
                                     

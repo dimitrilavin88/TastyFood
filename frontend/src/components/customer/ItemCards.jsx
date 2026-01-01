@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config/api.js';
 
 const ItemCards = ({ items }) => {
     const [quantities, setQuantities] = useState({});
@@ -82,7 +83,6 @@ const Items = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const API_BASE_URL = 'http://localhost:8080/api';
 
     useEffect(() => {
         fetchMenuData();

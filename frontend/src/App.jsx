@@ -16,8 +16,7 @@ import RecordDelivery from './pages/RecordDelivery.jsx'
 import OrderConfirmation from './pages/OrderConfirmation.jsx'
 import DeliveryInfo from './pages/DeliveryInfo.jsx'
 import CompletedOrder from './pages/CompletedOrder.jsx'
-
-const API_BASE_URL = 'http://localhost:8080/api';
+import { API_BASE_URL } from './config/api.js';
 
 // Home page component
 const Home = () => {
