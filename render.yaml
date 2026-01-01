@@ -48,10 +48,10 @@ services:
         value: https://tastyfood-backend.onrender.com/api
         # Note: Update this with your actual backend URL after deployment
 
+databases:
   # PostgreSQL Database
-  - type: pg
-    name: tastyfood-db
-    plan: free
-    region: oregon
+  - name: tastyfood-db
     databaseName: tastyfood
     user: tastyfood_user
+    plan: free
+    region: oregon
