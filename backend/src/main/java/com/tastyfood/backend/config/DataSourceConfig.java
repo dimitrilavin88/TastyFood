@@ -24,10 +24,17 @@ public class DataSourceConfig {
     @Bean
     @Primary
     public DataSource dataSource() {
-        logger.info("Connecting to SQLite database: {}", dataSourceUrl);
+        // Convert postgresql:// to jdbc:postgresql:// if needed (for Render)
+        String jdbcUrl = dataSourceUrl;
+        if (jdbcUrl != null && jdbcUrl.startsWith("postgresql://")) {
+            jdbcUrl = "jdbc:" + jdbcUrl;
+            logger.info("Converted PostgreSQL URL to JDBC format");
+        }
+        
+        logger.info("Connecting to database: {}", jdbcUrl.replaceAll(":[^:@]+@", ":****@"));
         
         return DataSourceBuilder.create()
-                .url(dataSourceUrl)
+                .url(jdbcUrl)
                 .driverClassName(driverClassName)
                 .build();
     }
