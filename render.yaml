@@ -2,11 +2,11 @@ services:
   # Backend Service (Spring Boot)
   - type: web
     name: tastyfood-backend
-    env: java
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
     region: oregon
     plan: free
-    buildCommand: cd backend && mvn clean package -DskipTests
-    startCommand: cd backend && java -jar target/backend-1.0.0.jar
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: production
