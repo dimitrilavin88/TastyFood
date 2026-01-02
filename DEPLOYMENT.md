@@ -73,13 +73,20 @@ For Spring Boot, you need: `jdbc:postgresql://host:port/dbname?user=user&passwor
 
 1. In the same Railway project, click **+ New Service**
 2. Select **Deploy from GitHub repo** (same repo)
-3. **CRITICAL:** Set the **Root Directory** to `frontend` in the service settings
-   - Click on your frontend service
+3. **CRITICAL:** Set the **Root Directory** to `frontend`:
+   - **BEFORE** Railway starts building, click on your frontend service
    - Go to **Settings** tab
-   - Under **Source**, set **Root Directory** to `frontend`
+   - Scroll to **Source** section
+   - Set **Root Directory** to `frontend` (must be exactly `frontend`, no leading/trailing slashes)
+   - Click **Save**
    - This ensures Railway uses the frontend's `railway.json` and `nixpacks.toml`, not the root ones
 4. Railway will detect it's a Node.js project
-5. **CRITICAL:** Add the environment variable BEFORE the build starts:
+5. **IMPORTANT:** If Railway already started building, you MUST:
+   - Delete the service
+   - Create a new service
+   - Set Root Directory to `frontend` BEFORE it starts building
+   - OR: Go to Settings → Source → Change Root Directory → Save → Redeploy
+6. **CRITICAL:** Add the environment variable BEFORE the build starts:
 
    - Click on your frontend service in Railway
    - Go to the **Variables** tab (or **Settings** → **Variables**)
@@ -103,8 +110,8 @@ For Spring Boot, you need: `jdbc:postgresql://host:port/dbname?user=user&passwor
    - If the build already started, you'll need to trigger a new deployment after adding the variable
    - Go to **Deployments** tab → Click **Redeploy** after adding the variable
 
-6. Railway will build and deploy your frontend
-7. **Find your frontend URL:**
+7. Railway will build and deploy your frontend
+8. **Find your frontend URL:**
    - After deployment completes, click on your frontend service in Railway
    - Go to the **Settings** tab
    - Scroll down to **Networking** section
