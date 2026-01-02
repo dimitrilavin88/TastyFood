@@ -112,6 +112,39 @@ After deployment, you'll need to initialize your database:
 - Railway provides a built-in database viewer where you can run SQL queries
 - Navigate to your PostgreSQL service → "Data" tab
 
+### Step 9: Migrate Your Existing Data
+
+**📖 See `DATABASE_MIGRATION.md` for complete migration instructions**
+
+To migrate your existing SQLite data to PostgreSQL:
+
+1. **Export your data**:
+
+   ```bash
+   python migrate_sqlite_to_postgres.py TastyFoodFinal.db postgres_migration.sql
+   ```
+
+   This creates a PostgreSQL-compatible SQL file with all your data.
+
+2. **Import to PostgreSQL**:
+
+   - Go to your PostgreSQL service in Railway
+   - Click "Query" tab
+   - Copy and paste the contents of `postgres_migration.sql`
+   - Click "Run" to execute
+
+3. **Verify migration**:
+   - Check row counts in Railway's database viewer
+   - Test login with existing credentials
+   - Verify all data displays correctly
+
+**The migration script automatically handles:**
+
+- Timestamp conversions (SQLite milliseconds → PostgreSQL timestamps)
+- Boolean conversions (0/1 → TRUE/FALSE)
+- String escaping
+- Data type compatibility
+
 ### Step 9: Get Your URLs
 
 1. Backend URL: Found in your backend service → Settings → Domains
