@@ -73,12 +73,22 @@ For Spring Boot, you need: `jdbc:postgresql://host:port/dbname?user=user&passwor
 
 1. In the same Railway project, click **+ New Service**
 2. Select **Deploy from GitHub repo** (same repo)
-3. Set the **Root Directory** to `frontend`
+3. **CRITICAL:** Set the **Root Directory** to `frontend` in the service settings
+   - Click on your frontend service
+   - Go to **Settings** tab
+   - Under **Source**, set **Root Directory** to `frontend`
+   - This ensures Railway uses the frontend's `railway.json` and `nixpacks.toml`, not the root ones
 4. Railway will detect it's a Node.js project
-5. Add the following environment variable (use the backend URL you found in Step 3):
+5. **CRITICAL:** Add the environment variable BEFORE the build starts:
+
+   - Click on your frontend service in Railway
+   - Go to the **Variables** tab (or **Settings** → **Variables**)
+   - Click **+ New Variable** or **+ Raw Editor**
+   - Add the following (use the backend URL you found in Step 3):
 
    ```
-   VITE_API_BASE_URL=https://[YOUR-BACKEND-URL].railway.app/api
+   Variable Name: VITE_API_BASE_URL
+   Value: https://[YOUR-BACKEND-URL]/api
    ```
 
    **Example:** If your backend URL is `https://tastyfood-backend-production.up.railway.app`, then:
@@ -86,6 +96,12 @@ For Spring Boot, you need: `jdbc:postgresql://host:port/dbname?user=user&passwor
    ```
    VITE_API_BASE_URL=https://tastyfood-backend-production.up.railway.app/api
    ```
+
+   **Important:**
+
+   - Set this variable BEFORE Railway starts building
+   - If the build already started, you'll need to trigger a new deployment after adding the variable
+   - Go to **Deployments** tab → Click **Redeploy** after adding the variable
 
 6. Railway will build and deploy your frontend
 7. **Find your frontend URL:**
@@ -140,5 +156,45 @@ For Spring Boot, you need: `jdbc:postgresql://host:port/dbname?user=user&passwor
 
 ### Build Failures
 
+#### Frontend Build Error: "npm run build" failed
+
+**Problem:** The build fails with a rollup/Vite error. This can happen if:
+
+- `VITE_API_BASE_URL` environment variable is not accessible during build
+- There are code syntax errors
+- Railway isn't passing environment variables to the Docker build phase
+
+**Solution:**
+
+1. **Verify environment variable is set:**
+
+   - Go to frontend service → **Variables** tab
+   - Ensure `VITE_API_BASE_URL` is set with your backend URL
+   - Format: `https://your-backend-url.railway.app/api` (no trailing slash)
+
+2. **Set variable at project level (if service level doesn't work):**
+
+   - Go to Railway project settings (not service settings)
+   - Add the variable there - Railway will share it with all services
+
+3. **Redeploy after setting variable:**
+
+   - Go to **Deployments** tab
+   - Click **Redeploy** to rebuild with the environment variable
+
+4. **Check Railway logs for detailed error:**
+
+   - Click on the failed deployment
+   - Look for the specific error message
+   - The error might reveal if it's an env var issue or code issue
+
+5. **Alternative: Use a default value temporarily:**
+   - The code already has a fallback to `http://localhost:8080/api`
+   - If the build still fails, the issue might be code-related, not env var related
+   - Check Railway logs for the actual error message
+
+#### Other Build Issues
+
 - Check Railway logs for specific error messages
 - Verify all dependencies are correctly specified in `pom.xml` and `package.json`
+- For frontend: Ensure Node.js version is compatible (Railway usually auto-detects)
