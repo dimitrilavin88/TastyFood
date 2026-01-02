@@ -1,5 +1,5 @@
 import './App.css'
-import Header from './components/common/Header'
+import Header from './components/common/header'
 import Footer from './components/common/Footer'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'

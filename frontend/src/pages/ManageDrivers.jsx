@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/common/Header';
+import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { useAuth } from '../utils/auth.jsx';
 import { API_BASE_URL } from '../config/api.js';

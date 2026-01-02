@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/common/Header';
+import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { validateUsername, validatePassword, useAuth } from '../utils/auth.jsx';
 import { API_BASE_URL } from '../config/api.js';

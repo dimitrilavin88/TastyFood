@@ -1,0 +1,9 @@
+node_modules/
+target/
+*.db
+*.db-shm
+*.db-wal
+.git/
+.DS_Store
+*.log
+

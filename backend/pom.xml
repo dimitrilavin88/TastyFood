@@ -53,7 +53,7 @@
             <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
         
-        <!-- PostgreSQL Database (for production) -->
+        <!-- PostgreSQL Database -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
