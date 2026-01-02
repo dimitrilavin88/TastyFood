@@ -28,11 +28,13 @@ This guide will help you deploy your TastyFood application to Railway.
 
 1. In your Railway project, click "New" → "GitHub Repo"
 2. Select your repository again
-3. Railway will detect it's a Java project
-4. Configure the service:
-   - **Root Directory**: `backend`
-   - **Build Command**: `mvn clean package -DskipTests`
-   - **Start Command**: `java -jar target/backend-1.0.0.jar`
+3. **IMPORTANT**: Configure the service settings:
+   - **Root Directory**: `backend` (this is critical - must be set to `backend`)
+   - Railway will auto-detect Java and use the `nixpacks.toml` in the backend directory
+4. The build will automatically:
+   - Install Maven and JDK 17
+   - Run `mvn clean package -DskipTests`
+   - Start with `java -jar target/backend-1.0.0.jar --spring.profiles.active=prod`
 
 ### Step 4: Configure Backend Environment Variables
 
@@ -52,10 +54,20 @@ PORT=8080
 
 1. In your Railway project, click "New" → "GitHub Repo"
 2. Select your repository again
-3. Configure the service:
-   - **Root Directory**: `frontend`
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm run preview` (or use a static file server)
+3. **IMPORTANT**: Configure the service settings:
+   - **Root Directory**: `frontend` (this is critical - must be set to `frontend`)
+   - Railway will auto-detect Node.js and use the `nixpacks.toml` in the frontend directory
+   - The `nixpacks.toml` is configured to use Node.js 20 (required for Vite 7)
+4. The build will automatically:
+   - Use Node.js 20.x
+   - Run `npm install`
+   - Run `npm run build`
+5. For the start command, Railway will use the `nixpacks.toml` start command (`npm run preview`)
+
+**Note**: If you prefer a production-ready static file server, you can:
+
+- Install `serve` as a dependency: `npm install serve`
+- Update `nixpacks.toml` start command to: `serve -s dist -l $PORT`
 
 **Alternative**: For better production setup, use a static file server:
 
