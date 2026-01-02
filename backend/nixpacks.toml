@@ -2,11 +2,11 @@
 nixPkgs = ["maven", "jdk17"]
 
 [phases.install]
-cmds = ["mvn clean install -DskipTests"]
+cmds = ["cd backend && mvn clean install -DskipTests"]
 
 [phases.build]
-cmds = ["mvn package -DskipTests"]
+cmds = ["echo 'Build completed'"]
 
 [start]
-cmd = "java -jar target/backend-1.0.0.jar"
+cmd = "cd backend && java -jar target/backend-1.0.0.jar"
 

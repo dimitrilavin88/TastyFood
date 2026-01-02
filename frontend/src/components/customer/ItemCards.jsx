@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../../config/api.js';
 
 const ItemCards = ({ items }) => {
     const [quantities, setQuantities] = useState({});
@@ -76,8 +77,6 @@ const ItemCards = ({ items }) => {
         </div>
     )
 }
-
-import { API_BASE_URL } from '../../config/api.js';
 
 const Items = () => {
     const [menuItems, setMenuItems] = useState([]);

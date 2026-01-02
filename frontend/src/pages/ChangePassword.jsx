@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import Header from '../components/common/Header';
+import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { useAuth, validatePassword } from '../utils/auth.jsx';
 import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../config/api.js';
+
+const API_BASE_URL = 'http://localhost:8080/api';
 
 const ChangePassword = () => {
     const { user } = useAuth();

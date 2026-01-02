@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import Header from '../components/common/Header';
+import Header from '../components/common/header';
 import Footer from '../components/common/Footer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import CompletedOrder from './CompletedOrder';
-import { API_BASE_URL } from '../config/api.js';
 
 const DeliveryInfo = () => {
     const navigate = useNavigate();
@@ -140,7 +139,7 @@ const DeliveryInfo = () => {
             };
             
             // Create order via API
-            const response = await fetch(`${API_BASE_URL}/orders`, {
+            const response = await fetch('http://localhost:8080/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

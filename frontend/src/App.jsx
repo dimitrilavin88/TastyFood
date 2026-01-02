@@ -1,5 +1,5 @@
 import './App.css'
-import Header from './components/common/Header'
+import Header from './components/common/header'
 import Footer from './components/common/Footer'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
@@ -16,7 +16,7 @@ import RecordDelivery from './pages/RecordDelivery.jsx'
 import OrderConfirmation from './pages/OrderConfirmation.jsx'
 import DeliveryInfo from './pages/DeliveryInfo.jsx'
 import CompletedOrder from './pages/CompletedOrder.jsx'
-import { API_BASE_URL } from './config/api.js';
+import { API_BASE_URL } from './config/api.js'
 
 // Home page component
 const Home = () => {

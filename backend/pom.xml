@@ -40,7 +40,7 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         
-        <!-- SQLite Database -->
+        <!-- SQLite Database (for local development) -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
@@ -53,7 +53,7 @@
             <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
         
-        <!-- PostgreSQL Database -->
+        <!-- PostgreSQL Database (for production/Supabase) -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
